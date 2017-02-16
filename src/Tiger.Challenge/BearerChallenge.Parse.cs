@@ -41,11 +41,11 @@ namespace Tiger.Challenge
 
         [NotNull]
         static Parser<char> QdText =>
-            HTab.Or(Sp)
-                .Or(Char('!'))
-                .Or(Char(c => c >= 0x23 && c <= 0x5B, "%x23-5B"))
-                .Or(Char(c => c >= 0x5D && c <= 0x7E, "%x5D-7E"))
-                .Or(ObsText)
+            HTab.XOr(Sp)
+                .XOr(Char('!'))
+                .XOr(Char(c => c >= 0x23 && c <= 0x5B, "%x23-5B"))
+                .XOr(Char(c => c >= 0x5D && c <= 0x7E, "%x5D-7E"))
+                .XOr(ObsText)
                 .Named("QDTEXT");
 
         [NotNull]
@@ -54,14 +54,14 @@ namespace Tiger.Challenge
         [NotNull]
         static Parser<char> QuotedPair =>
             from escape in Char('\\')
-            from next in HTab.Or(Sp).Or(VChar).Or(ObsText)
+            from next in HTab.XOr(Sp).XOr(VChar).XOr(ObsText)
             select next;
 
         [NotNull]
         static Parser<string> QuotedString =>
             QdText
-                .Or(QuotedPair)
-                .Many()
+                .XOr(QuotedPair)
+                .XMany()
                 .Text()
                 .Contained(DQuote, DQuote)
                 .Named("quoted-string");
@@ -69,17 +69,17 @@ namespace Tiger.Challenge
         [NotNull]
         static Parser<string> Token =>
             LetterOrDigit
-                .Or(Chars(@"!#$%&'*+-.^_`|~"))
-                .AtLeastOnce()
+                .XOr(Chars(@"!#$%&'*+-.^_`|~"))
+                .XAtLeastOnce()
                 .Text()
                 .Named("token");
 
         [NotNull]
         static Parser<string> ScopeToken =>
             Char('!')
-                .Or(Char(c => c >= 0x23 && c <= 0x5B, "%x23-5B"))
-                .Or(Char(c => c >= 0x5D && c <= 0x7E, "%x5D-7E"))
-                .AtLeastOnce()
+                .XOr(Char(c => c >= 0x23 && c <= 0x5B, "%x23-5B"))
+                .XOr(Char(c => c >= 0x5D && c <= 0x7E, "%x5D-7E"))
+                .XAtLeastOnce()
                 .Text()
                 .Named("scope-token");
 
@@ -87,21 +87,21 @@ namespace Tiger.Challenge
         static Parser<KeyValuePair<string, string>> AuthParam =>
             from key in Token
             from equalsSign in Char('=').Token()
-            from value in Token.Or(QuotedString)
+            from value in Token.XOr(QuotedString)
             select new KeyValuePair<string, string>(key, value);
 
         [NotNull]
         static Parser<IImmutableDictionary<string, string>> AuthParams =>
-            AuthParam.DelimitedBy(Char(',').Token())
-                .Or(Return(Empty<KeyValuePair<string, string>>()))
+            AuthParam.XDelimitedBy(Char(',').Token())
+                .XOr(Return(Empty<KeyValuePair<string, string>>()))
                 .End()
                 .WithoutDuplicates(new ChallengeKeyComparer<string>(OrdinalIgnoreCase))
                 .Select(aps => aps.ToImmutableDictionary(OrdinalIgnoreCase));
 
         [NotNull]
         static Parser<IImmutableList<string>> Scopes =>
-            ScopeToken.DelimitedBy(Sp.AtLeastOnce())
-                .Or(Return(Empty<string>()))
+            ScopeToken.XDelimitedBy(Sp.XAtLeastOnce())
+                .XOr(Return(Empty<string>()))
                 .End()
                 .WithoutDuplicates(OrdinalIgnoreCase)
                 .Select(ImmutableList.CreateRange);
