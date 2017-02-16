@@ -1,0 +1,63 @@
+{
+  "version": "1.0.0-*",
+  "name": "Tiger.Challenge",
+  "title": "Tiger Challenge",
+  "description": "A parser of WWW-Authenticate challenge headers.",
+  "language": "en-US",
+  "authors": [ "cosborn@cimpress.com" ],
+  "copyright": "Copyright ©Cimpress 2017",
+
+  "buildOptions": {
+    "debugType": "portable",
+    "xmlDoc": true,
+    "warningsAsErrors": true,
+    "define": [ "TRACE" ],
+    "additionalArguments": [
+      "/ruleset:../../Tiger.ruleset",
+      "/additionalfile:../../stylecop.json"
+    ]
+  },
+  "configurations": {
+    "Debug": {
+      "buildOptions": {
+        "define": [ "DEBUG" ]
+      }
+    },
+    "Release": {
+      "buildOptions": {
+        "define": [ "RELEASE" ],
+        "optimize": true
+      }
+    }
+  },
+
+  "dependencies": {
+    "Sprache": "2.1.0",
+    "System.Collections.Immutable": "1.3.1",
+
+    "StyleCop.Analyzers": {
+      "type": "build",
+      "version": "1.0.0"
+    }
+  },
+
+  "frameworks": {
+    "netstandard1.3": {
+      "dependencies": {
+        "NETStandard.Library": "1.6.1"
+      }
+    }
+  },
+
+  "packOptions": {
+    "releaseNotes": "Everything is new!",
+    "owners": [ "cosborn@cimpress.com" ],
+    "repository": {
+      "type": "git",
+      "url": "https://mcpstash.cimpress.net/projects/TIGER/repos/challenge"
+    },
+    "requireLicenseAcceptance": false,
+    "tags": [ "www-authenticate", "challenge", "bearer", "auth0", "oauth", "oauth2", "oauth 2.0" ],
+    "iconUrl": "https://mcpstash.cimpress.net/projects/TIGER/repos/challenge/browse/tiger_logo.png?raw"
+  }
+}
