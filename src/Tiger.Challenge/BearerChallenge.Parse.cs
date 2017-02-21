@@ -182,10 +182,10 @@ namespace Tiger.Challenge
         /// otherwise, <see langword="false"/>.
         /// </returns>
         /// <exception cref="ArgumentNullException"><paramref name="challengeParameter"/> is <see langword="null"/>.</exception>
-        [Pure]
+        [ContractAnnotation("=>true,result:notnull; =>false,result:null"), Pure]
         public static bool TryParse(
             [NotNull] string challengeParameter,
-            [CanBeNull] out BearerChallenge result)
+            out BearerChallenge result)
         {
             if (challengeParameter == null) { throw new ArgumentNullException(nameof(challengeParameter)); }
 

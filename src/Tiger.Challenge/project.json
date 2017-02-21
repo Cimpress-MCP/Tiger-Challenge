@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0-*",
+  "version": "1.0.1-*",
   "name": "Tiger.Challenge",
   "title": "Tiger Challenge",
   "description": "A parser of WWW-Authenticate challenge headers.",
@@ -50,7 +50,7 @@
   },
 
   "packOptions": {
-    "releaseNotes": "Everything is new!",
+    "releaseNotes": "The `null`ability of the `out` parameter of `BearerChallenge.TryParse(string, out BearerChallenge)` has been corrected.",
     "owners": [ "cosborn@cimpress.com" ],
     "repository": {
       "type": "git",
