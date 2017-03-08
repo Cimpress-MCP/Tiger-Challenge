@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>A parser of WWW-Authenticate challenge headers.</Description>
+    <Copyright>©Cimpress 2017</Copyright>
+    <AssemblyTitle>Tiger Challenge</AssemblyTitle>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <VersionPrefix>1.0.1</VersionPrefix>
+    <Authors>cosborn@cimpress.com</Authors>
+    <TargetFramework>netstandard1.3</TargetFramework>
+    <DefineConstants>$(DefineConstants);CODE_ANALYSIS</DefineConstants>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DebugType>portable</DebugType>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <AssemblyName>Tiger.Challenge</AssemblyName>
+    <PackageId>Tiger.Challenge</PackageId>
+    <PackageTags>www-authenticate;challenge;bearer;auth0;oauth;oauth2;oauth 2.0</PackageTags>
+    <PackageReleaseNotes>The `null`ability of the `out` parameter of `BearerChallenge.TryParse(string, out BearerChallenge)` has been corrected.</PackageReleaseNotes>
+    <PackageProjectUrl>https://mcpstash.cimpress.net/projects/TIGER</PackageProjectUrl>
+    <PackageIconUrl>https://mcpstash.cimpress.net/projects/TIGER/repos/challenge/browse/tiger_logo.png?raw</PackageIconUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://mcpstash.cimpress.net/projects/TIGER/repos/challenge</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Sprache" Version="2.1.0" />
+    <PackageReference Include="System.Collections.Immutable" Version="1.3.1" />
+    <!--<PackageReference Include="StyleCop.Analyzers" Version="1.0.0">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>-->
+  </ItemGroup>
+
+</Project>
