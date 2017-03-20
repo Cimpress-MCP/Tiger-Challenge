@@ -10,7 +10,7 @@ pipeline {
     stage('Restore') {
       steps {
         echo 'about to restore...'
-        dotnet.restore
+        dotnetRestore
       }
     }
     stage('Build') {
