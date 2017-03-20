@@ -9,9 +9,8 @@ pipeline {
   stages {
     stage('Restore') {
       steps {
-        // echo 'about to restore...'
-        // dotnetRestore
-        sh 'dotnet restore'
+        echo 'about to restore...'
+        dotnetRestore
       }
     }
     stage('Build') {
