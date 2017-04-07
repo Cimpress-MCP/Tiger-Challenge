@@ -10,8 +10,25 @@ namespace Tiger.Challenge
     /// Represents the challenge following the "Bearer" auth. scheme
     /// in a WWW-Authenticate header.
     /// </summary>
+    [PublicAPI]
     public sealed partial class BearerChallenge
     {
+        BearerChallenge(
+            string realm,
+            [NotNull, ItemNotNull] IImmutableList<string> scope,
+            string error,
+            string errorDescription,
+            Uri errorUri,
+            [NotNull] IImmutableDictionary<string, string> extensions)
+        {
+            Realm = realm;
+            Scope = scope ?? throw new ArgumentNullException(nameof(scope));
+            Error = error;
+            ErrorDescription = errorDescription;
+            ErrorUri = errorUri;
+            Extensions = extensions ?? throw new ArgumentNullException(nameof(extensions));
+        }
+
         /// <summary>Gets the name of the scope of authenticated protection.</summary>
         /// <remarks><para>Corresponds to the key <c>realm</c>.</para></remarks>
         public string Realm { get; }
@@ -42,33 +59,16 @@ namespace Tiger.Challenge
         /// </summary>
         [NotNull]
         public IImmutableDictionary<string, string> Extensions { get; }
+    }
 
-        BearerChallenge(
-            string realm,
-            [NotNull, ItemNotNull] IImmutableList<string> scope,
-            string error,
-            string errorDescription,
-            Uri errorUri,
-            [NotNull] IImmutableDictionary<string, string> extensions)
-        {
-            if (scope == null) { throw new ArgumentNullException(nameof(scope)); }
-            if (extensions == null) { throw new ArgumentNullException(nameof(extensions)); }
-
-            Realm = realm;
-            Scope = scope;
-            Error = error;
-            ErrorDescription = errorDescription;
-            ErrorUri = errorUri;
-            Extensions = extensions;
-        }
-
-        #region Overrides
-
+    /// <content>Overrides and override-equivalents.</content>
+    public sealed partial class BearerChallenge
+    {
         /// <inheritdoc/>
         [Pure]
         public override string ToString()
         {
-            var output = new List<string>();
+            var output = new List<string>(8);
             if (Realm != null)
             {
                 output.Add($@"{RealmKey}=""{Realm}""");
@@ -118,7 +118,5 @@ namespace Tiger.Challenge
                 return hash;
             }
         }
-
-        #endregion
     }
 }

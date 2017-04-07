@@ -13,10 +13,10 @@ The challenge portion of the HTTP header `WWW-Authenticate` is tricky to parse. 
 - A whitelisted character range for parameter keys and values.
 - A totally different whitelisted character range for "scope" values.
 - Optional (though officially "bad") whitespace surrounding the "=" key–value separator.
-    - Unless it's escaped.
-        - But only before the "=", not after.
-            - But only *then* if the value is wrapped in double-quotes.
-                - Unless those themselves are escaped.
+  - Unless it's escaped.
+    - But only before the "=", not after.
+      - But only *then* if the value is wrapped in double-quotes.
+        - Unless those themselves are escaped.
 
 For this kind of parsing, an actual parser is required.
 

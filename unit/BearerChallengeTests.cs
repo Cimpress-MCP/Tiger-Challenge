@@ -1,8 +1,6 @@
 ﻿// ReSharper disable All
 
 using System;
-using Sprache;
-using Tiger.Types;
 using Xunit;
 using static System.StringComparer;
 using static System.UriKind;
@@ -32,8 +30,7 @@ namespace Tiger.Challenge.Tests
             var challenge = string.Empty;
 
             // act
-            BearerChallenge actual;
-            var success = BearerChallenge.TryParse(challenge, out actual);
+            var success = BearerChallenge.TryParse(challenge, out var actual);
 
             // assert
             Assert.True(success);
@@ -68,8 +65,7 @@ namespace Tiger.Challenge.Tests
             var challenge = string.Empty;
 
             // act
-            BearerChallenge actual;
-            var success = BearerChallenge.TryParse(challenge, out actual);
+            var success = BearerChallenge.TryParse(challenge, out var actual);
 
             // assert
             Assert.True(success);
@@ -104,8 +100,7 @@ namespace Tiger.Challenge.Tests
             var challenge = @"realm=""cimpress.auth0.com"", scope="""", error=""invalid_token"", error_description=""The token is expired""";
 
             // act
-            BearerChallenge actual;
-            var success = BearerChallenge.TryParse(challenge, out actual);
+            var success = BearerChallenge.TryParse(challenge, out var actual);
 
             // assert
             Assert.True(success);
@@ -146,8 +141,7 @@ namespace Tiger.Challenge.Tests
             var challenge = $@"realm=""{realm}"", scope="""", error=""{error}"", error_description=""{errorDescription}""";
 
             // act
-            BearerChallenge actual;
-            var success = BearerChallenge.TryParse(challenge, out actual);
+            var success = BearerChallenge.TryParse(challenge, out var actual);
 
             // assert
             Assert.True(success);
@@ -182,8 +176,7 @@ namespace Tiger.Challenge.Tests
             var challenge = @"realm=""cimpress.auth0.com"", error=""invalid_token"", error_description=""The token is expired""";
 
             // act
-            BearerChallenge actual;
-            var success = BearerChallenge.TryParse(challenge, out actual);
+            var success = BearerChallenge.TryParse(challenge, out var actual);
 
             // assert
             Assert.True(success);
@@ -223,8 +216,7 @@ namespace Tiger.Challenge.Tests
             var challenge = $@"realm=""{realm}"", error=""{error}"", error_description=""{errorDescription}""";
 
             // act
-            BearerChallenge actual;
-            var success = BearerChallenge.TryParse(challenge, out actual);
+            var success = BearerChallenge.TryParse(challenge, out var actual);
 
             // assert
             Assert.True(success);
@@ -269,8 +261,7 @@ namespace Tiger.Challenge.Tests
             var challenge = $@"realm=""{realm}"", authorization_uri=""{authorizationUri}"", scope=""{string.Join(" ", scope)}"", error=""{error}"", error_description=""{errorDescription}""";
 
             // act
-            BearerChallenge actual;
-            var success = BearerChallenge.TryParse(challenge, out actual);
+            var success = BearerChallenge.TryParse(challenge, out var actual);
 
             // assert
             Assert.True(success);
@@ -317,8 +308,7 @@ namespace Tiger.Challenge.Tests
             var challenge = $@"realm=""{realm}"", authorization_uri=""{authorizationUri}"", scope=""{string.Join(" ", scope)}"", error=""{error}"", error_description=""{errorDescription}""";
 
             // act
-            BearerChallenge actual;
-            var success = BearerChallenge.TryParse(challenge, out actual);
+            var success = BearerChallenge.TryParse(challenge, out var actual);
 
             // assert
             Assert.True(success);
@@ -342,7 +332,7 @@ namespace Tiger.Challenge.Tests
             var challenge = @"realm=""cimpress.auth0.com"", scope=""client_id=0NBlSon1C4tJEVWS6GJRjwju5NxKHfBF service=https://orr.fen.cimpress.io"", error=""invalid_token"", error_description=""The token is expired""";
 
             // act
-            var actual = Record.Exception(() => BearerChallenge.Parse(challenge).ToString().Pipe(BearerChallenge.Parse));
+            var actual = Record.Exception(() => BearerChallenge.Parse(BearerChallenge.Parse(challenge).ToString()));
 
             // assert
             Assert.Null(actual);
@@ -370,8 +360,7 @@ namespace Tiger.Challenge.Tests
             var challenge = @"realm=""cimpress.auth0.com, scope=""client_id=0NBlSon1C4tJEVWS6GJRjwju5NxKHfBF service=https://orr.fen.cimpress.io"", error=""invalid_token"", error_description=""The token is expired""";
 
             // act
-            BearerChallenge actual;
-            var success = BearerChallenge.TryParse(challenge, out actual);
+            var success = BearerChallenge.TryParse(challenge, out var actual);
 
             // assert
             Assert.False(success);
@@ -400,8 +389,7 @@ namespace Tiger.Challenge.Tests
             var challenge = @"realm=""cimpress.auth0.com"", realm=""cimpress.example.com"", scope=""client_id=0NBlSon1C4tJEVWS6GJRjwju5NxKHfBF service=https://orr.fen.cimpress.io"", error=""invalid_token"", error_description=""The token is expired""";
 
             // act
-            BearerChallenge actual;
-            var success = BearerChallenge.TryParse(challenge, out actual);
+            var success = BearerChallenge.TryParse(challenge, out var actual);
 
             // assert
             Assert.False(success);

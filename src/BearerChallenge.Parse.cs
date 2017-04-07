@@ -10,11 +10,7 @@ using static System.UriKind;
 
 namespace Tiger.Challenge
 {
-    /// <summary>
-    /// Parses the challenge following the "Bearer" auth. scheme
-    /// in a WWW-Authenticate header.
-    /// </summary>
-    [PublicAPI]
+    /// <content>The parsing functionality of a bearer challenge.</content>
     public sealed partial class BearerChallenge
     {
         const string RealmKey = "realm";

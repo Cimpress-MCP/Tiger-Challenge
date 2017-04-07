@@ -29,9 +29,7 @@ namespace Tiger.Challenge
         /// <exception cref="ArgumentNullException"><paramref name="keyComparer"/> is <see langword="null"/>.</exception>
         public ChallengeKeyComparer([NotNull] IEqualityComparer<string> keyComparer)
         {
-            if (keyComparer == null) { throw new ArgumentNullException(nameof(keyComparer)); }
-
-            _keyComparer = keyComparer;
+            _keyComparer = keyComparer ?? throw new ArgumentNullException(nameof(keyComparer));
         }
 
         /// <inheritdoc />

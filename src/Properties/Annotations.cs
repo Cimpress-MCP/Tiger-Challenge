@@ -22,16 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
 using System;
-using static System.AttributeTargets;
 
 #pragma warning disable 1591
+// ReSharper disable CheckNamespace
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable IntroduceOptionalParameters.Global
 // ReSharper disable MemberCanBeProtected.Global
 // ReSharper disable InconsistentNaming
-// ReSharper disable CheckNamespace
 
 namespace JetBrains.Annotations
 {
@@ -41,13 +40,16 @@ namespace JetBrains.Annotations
     /// </summary>
     /// <example><code>
     /// [CanBeNull] object Test() => null;
-    /// 
+    ///
     /// void UseTest() {
     ///   var p = Test();
     ///   var s = p.ToString(); // Warning: Possible 'System.NullReferenceException'
     /// }
     /// </code></example>
-    [AttributeUsage(Method | Parameter | Property | AttributeTargets.Delegate | Field | Event | Class | Interface | GenericParameter)]
+    [AttributeUsage(
+        AttributeTargets.Method | AttributeTargets.Parameter | AttributeTargets.Property |
+        AttributeTargets.Delegate | AttributeTargets.Field | AttributeTargets.Event |
+        AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.GenericParameter)]
     sealed class CanBeNullAttribute : Attribute { }
 
     /// <summary>
@@ -58,7 +60,10 @@ namespace JetBrains.Annotations
     ///   return null; // Warning: Possible 'null' assignment
     /// }
     /// </code></example>
-    [AttributeUsage(Method | Parameter | Property | AttributeTargets.Delegate | Field | Event | Class | Interface | GenericParameter)]
+    [AttributeUsage(
+        AttributeTargets.Method | AttributeTargets.Parameter | AttributeTargets.Property |
+        AttributeTargets.Delegate | AttributeTargets.Field | AttributeTargets.Event |
+        AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.GenericParameter)]
     sealed class NotNullAttribute : Attribute { }
 
     /// <summary>
@@ -66,8 +71,130 @@ namespace JetBrains.Annotations
     /// and Lazy classes to indicate that the value of a collection item, of the Task.Result property
     /// or of the Lazy.Value property can never be null.
     /// </summary>
-    [AttributeUsage(Method | Parameter | Property | AttributeTargets.Delegate | Field)]
+    [AttributeUsage(
+        AttributeTargets.Method | AttributeTargets.Parameter | AttributeTargets.Property |
+        AttributeTargets.Delegate | AttributeTargets.Field)]
     sealed class ItemNotNullAttribute : Attribute { }
+
+    /// <summary>
+    /// Can be appplied to symbols of types derived from IEnumerable as well as to symbols of Task
+    /// and Lazy classes to indicate that the value of a collection item, of the Task.Result property
+    /// or of the Lazy.Value property can be null.
+    /// </summary>
+    [AttributeUsage(
+        AttributeTargets.Method | AttributeTargets.Parameter | AttributeTargets.Property |
+        AttributeTargets.Delegate | AttributeTargets.Field)]
+    sealed class ItemCanBeNullAttribute : Attribute { }
+
+    /// <summary>
+    /// Indicates that the marked method builds string by format pattern and (optional) arguments.
+    /// Parameter, which contains format string, should be given in constructor. The format string
+    /// should be in <see cref="string.Format(IFormatProvider,string,object[])"/>-like form.
+    /// </summary>
+    /// <example><code>
+    /// [StringFormatMethod("message")]
+    /// void ShowError(string message, params object[] args) { /* do something */ }
+    ///
+    /// void Foo() {
+    ///   ShowError("Failed: {0}"); // Warning: Non-existing argument in format string
+    /// }
+    /// </code></example>
+    [AttributeUsage(
+        AttributeTargets.Constructor | AttributeTargets.Method |
+        AttributeTargets.Property | AttributeTargets.Delegate)]
+    sealed class StringFormatMethodAttribute : Attribute
+    {
+        /// <param name="formatParameterName">
+        /// Specifies which parameter of an annotated method should be treated as format-string
+        /// </param>
+        public StringFormatMethodAttribute([NotNull] string formatParameterName)
+        {
+            FormatParameterName = formatParameterName;
+        }
+
+        [NotNull] public string FormatParameterName { get; }
+    }
+
+    /// <summary>
+    /// For a parameter that is expected to be one of the limited set of values.
+    /// Specify fields of which type should be used as values for this parameter.
+    /// </summary>
+    [AttributeUsage(
+        AttributeTargets.Parameter | AttributeTargets.Property | AttributeTargets.Field,
+        AllowMultiple = true)]
+    sealed class ValueProviderAttribute : Attribute
+    {
+        public ValueProviderAttribute([NotNull] string name)
+        {
+            Name = name;
+        }
+
+        [NotNull] public string Name { get; }
+    }
+
+    /// <summary>
+    /// Indicates that the function argument should be string literal and match one
+    /// of the parameters of the caller function. For example, ReSharper annotates
+    /// the parameter of <see cref="System.ArgumentNullException"/>.
+    /// </summary>
+    /// <example><code>
+    /// void Foo(string param) {
+    ///   if (param == null)
+    ///     throw new ArgumentNullException("par"); // Warning: Cannot resolve symbol
+    /// }
+    /// </code></example>
+    [AttributeUsage(AttributeTargets.Parameter)]
+    sealed class InvokerParameterNameAttribute : Attribute { }
+
+    /// <summary>
+    /// Indicates that the method is contained in a type that implements
+    /// <c>System.ComponentModel.INotifyPropertyChanged</c> interface and this method
+    /// is used to notify that some property value changed.
+    /// </summary>
+    /// <remarks>
+    /// The method should be non-static and conform to one of the supported signatures:
+    /// <list>
+    /// <item><c>NotifyChanged(string)</c></item>
+    /// <item><c>NotifyChanged(params string[])</c></item>
+    /// <item><c>NotifyChanged{T}(Expression{Func{T}})</c></item>
+    /// <item><c>NotifyChanged{T,U}(Expression{Func{T,U}})</c></item>
+    /// <item><c>SetProperty{T}(ref T, T, string)</c></item>
+    /// </list>
+    /// </remarks>
+    /// <example><code>
+    /// public class Foo : INotifyPropertyChanged {
+    ///   public event PropertyChangedEventHandler PropertyChanged;
+    ///
+    ///   [NotifyPropertyChangedInvocator]
+    ///   protected virtual void NotifyChanged(string propertyName) { ... }
+    ///
+    ///   string _name;
+    ///
+    ///   public string Name {
+    ///     get { return _name; }
+    ///     set { _name = value; NotifyChanged("LastName"); /* Warning */ }
+    ///   }
+    /// }
+    /// </code>
+    /// Examples of generated notifications:
+    /// <list>
+    /// <item><c>NotifyChanged("Property")</c></item>
+    /// <item><c>NotifyChanged(() =&gt; Property)</c></item>
+    /// <item><c>NotifyChanged((VM x) =&gt; x.Property)</c></item>
+    /// <item><c>SetProperty(ref myField, value, "Property")</c></item>
+    /// </list>
+    /// </example>
+    [AttributeUsage(AttributeTargets.Method)]
+    sealed class NotifyPropertyChangedInvocatorAttribute : Attribute
+    {
+        public NotifyPropertyChangedInvocatorAttribute() { }
+        public NotifyPropertyChangedInvocatorAttribute([NotNull] string parameterName)
+        {
+            ParameterName = parameterName;
+        }
+
+        [CanBeNull] public string ParameterName { get; }
+    }
 
     /// <summary>
     /// Describes dependency between method input and output.
@@ -113,11 +240,11 @@ namespace JetBrains.Annotations
     /// public bool TryParse(string s, out Person result)
     /// </code></item>
     /// </list></examples>
-    [AttributeUsage(Method, AllowMultiple = true)]
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     sealed class ContractAnnotationAttribute : Attribute
     {
         public ContractAnnotationAttribute([NotNull] string contract)
-          : this(contract, false) { }
+            : this(contract, false) { }
 
         public ContractAnnotationAttribute([NotNull] string contract, bool forceFullStates)
         {
@@ -125,27 +252,94 @@ namespace JetBrains.Annotations
             ForceFullStates = forceFullStates;
         }
 
-        [NotNull]
-        public string Contract { get; private set; }
+        [NotNull] public string Contract { get; }
 
-        public bool ForceFullStates { get; private set; }
+        public bool ForceFullStates { get; }
+    }
+
+    /// <summary>
+    /// Indicates that marked element should be localized or not.
+    /// </summary>
+    /// <example><code>
+    /// [LocalizationRequiredAttribute(true)]
+    /// class Foo {
+    ///   string str = "my string"; // Warning: Localizable string
+    /// }
+    /// </code></example>
+    [AttributeUsage(AttributeTargets.All)]
+    sealed class LocalizationRequiredAttribute : Attribute
+    {
+        public LocalizationRequiredAttribute() : this(true) { }
+
+        public LocalizationRequiredAttribute(bool required)
+        {
+            Required = required;
+        }
+
+        public bool Required { get; }
+    }
+
+    /// <summary>
+    /// Indicates that the value of the marked type (or its derivatives)
+    /// cannot be compared using '==' or '!=' operators and <c>Equals()</c>
+    /// should be used instead. However, using '==' or '!=' for comparison
+    /// with <c>null</c> is always permitted.
+    /// </summary>
+    /// <example><code>
+    /// [CannotApplyEqualityOperator]
+    /// class NoEquality { }
+    ///
+    /// class UsesNoEquality {
+    ///   void Test() {
+    ///     var ca1 = new NoEquality();
+    ///     var ca2 = new NoEquality();
+    ///     if (ca1 != null) { // OK
+    ///       bool condition = ca1 == ca2; // Warning
+    ///     }
+    ///   }
+    /// }
+    /// </code></example>
+    [AttributeUsage(AttributeTargets.Interface | AttributeTargets.Class | AttributeTargets.Struct)]
+    sealed class CannotApplyEqualityOperatorAttribute : Attribute { }
+
+    /// <summary>
+    /// When applied to a target attribute, specifies a requirement for any type marked
+    /// with the target attribute to implement or inherit specific type or types.
+    /// </summary>
+    /// <example><code>
+    /// [BaseTypeRequired(typeof(IComponent)] // Specify requirement
+    /// class ComponentAttribute : Attribute { }
+    ///
+    /// [Component] // ComponentAttribute requires implementing IComponent interface
+    /// class MyComponent : IComponent { }
+    /// </code></example>
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+    [BaseTypeRequired(typeof(Attribute))]
+    sealed class BaseTypeRequiredAttribute : Attribute
+    {
+        public BaseTypeRequiredAttribute([NotNull] Type baseType)
+        {
+            BaseType = baseType;
+        }
+
+        [NotNull] public Type BaseType { get; }
     }
 
     /// <summary>
     /// Indicates that the marked symbol is used implicitly (e.g. via reflection, in external library),
     /// so this symbol will not be marked as unused (as well as by other usage inspections).
     /// </summary>
-    [AttributeUsage(All)]
+    [AttributeUsage(AttributeTargets.All)]
     sealed class UsedImplicitlyAttribute : Attribute
     {
         public UsedImplicitlyAttribute()
-          : this(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.Default) { }
+            : this(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.Default) { }
 
         public UsedImplicitlyAttribute(ImplicitUseKindFlags useKindFlags)
-          : this(useKindFlags, ImplicitUseTargetFlags.Default) { }
+            : this(useKindFlags, ImplicitUseTargetFlags.Default) { }
 
         public UsedImplicitlyAttribute(ImplicitUseTargetFlags targetFlags)
-          : this(ImplicitUseKindFlags.Default, targetFlags) { }
+            : this(ImplicitUseKindFlags.Default, targetFlags) { }
 
         public UsedImplicitlyAttribute(ImplicitUseKindFlags useKindFlags, ImplicitUseTargetFlags targetFlags)
         {
@@ -153,26 +347,26 @@ namespace JetBrains.Annotations
             TargetFlags = targetFlags;
         }
 
-        public ImplicitUseKindFlags UseKindFlags { get; private set; }
+        public ImplicitUseKindFlags UseKindFlags { get; }
 
-        public ImplicitUseTargetFlags TargetFlags { get; private set; }
+        public ImplicitUseTargetFlags TargetFlags { get; }
     }
 
     /// <summary>
     /// Should be used on attributes and causes ReSharper to not mark symbols marked with such attributes
     /// as unused (as well as by other usage inspections)
     /// </summary>
-    [AttributeUsage(Class | GenericParameter)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.GenericParameter)]
     sealed class MeansImplicitUseAttribute : Attribute
     {
         public MeansImplicitUseAttribute()
-          : this(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.Default) { }
+            : this(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.Default) { }
 
         public MeansImplicitUseAttribute(ImplicitUseKindFlags useKindFlags)
-          : this(useKindFlags, ImplicitUseTargetFlags.Default) { }
+            : this(useKindFlags, ImplicitUseTargetFlags.Default) { }
 
         public MeansImplicitUseAttribute(ImplicitUseTargetFlags targetFlags)
-          : this(ImplicitUseKindFlags.Default, targetFlags) { }
+            : this(ImplicitUseKindFlags.Default, targetFlags) { }
 
         public MeansImplicitUseAttribute(ImplicitUseKindFlags useKindFlags, ImplicitUseTargetFlags targetFlags)
         {
@@ -180,11 +374,9 @@ namespace JetBrains.Annotations
             TargetFlags = targetFlags;
         }
 
-        [UsedImplicitly]
-        public ImplicitUseKindFlags UseKindFlags { get; private set; }
+        [UsedImplicitly] public ImplicitUseKindFlags UseKindFlags { get; private set; }
 
-        [UsedImplicitly]
-        public ImplicitUseTargetFlags TargetFlags { get; private set; }
+        [UsedImplicitly] public ImplicitUseTargetFlags TargetFlags { get; private set; }
     }
 
     [Flags]
@@ -233,9 +425,16 @@ namespace JetBrains.Annotations
             Comment = comment;
         }
 
-        [CanBeNull]
-        public string Comment { get; private set; }
+        [CanBeNull] public string Comment { get; }
     }
+
+    /// <summary>
+    /// Tells code analysis engine if the parameter is completely handled when the invoked method is on stack.
+    /// If the parameter is a delegate, indicates that delegate is executed while the method is executed.
+    /// If the parameter is an enumerable, indicates that it is enumerated while the method is executed.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Parameter)]
+    sealed class InstantHandleAttribute : Attribute { }
 
     /// <summary>
     /// Indicates that a method does not make any observable state changes.
@@ -243,11 +442,250 @@ namespace JetBrains.Annotations
     /// </summary>
     /// <example><code>
     /// [Pure] int Multiply(int x, int y) => x * y;
-    /// 
+    ///
     /// void M() {
     ///   Multiply(123, 42); // Waring: Return value of pure method is not used
     /// }
     /// </code></example>
-    [AttributeUsage(Method)]
+    [AttributeUsage(AttributeTargets.Method)]
     sealed class PureAttribute : Attribute { }
+
+    /// <summary>
+    /// Indicates that the return value of method invocation must be used.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Method)]
+    sealed class MustUseReturnValueAttribute : Attribute
+    {
+        public MustUseReturnValueAttribute() { }
+
+        public MustUseReturnValueAttribute([NotNull] string justification)
+        {
+            Justification = justification;
+        }
+
+        [CanBeNull] public string Justification { get; }
+    }
+
+    /// <summary>
+    /// Indicates the type member or parameter of some type, that should be used instead of all other ways
+    /// to get the value that type. This annotation is useful when you have some "context" value evaluated
+    /// and stored somewhere, meaning that all other ways to get this value must be consolidated with existing one.
+    /// </summary>
+    /// <example><code>
+    /// class Foo {
+    ///   [ProvidesContext] IBarService _barService = ...;
+    ///
+    ///   void ProcessNode(INode node) {
+    ///     DoSomething(node, node.GetGlobalServices().Bar);
+    ///     //              ^ Warning: use value of '_barService' field
+    ///   }
+    /// }
+    /// </code></example>
+    [AttributeUsage(
+        AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Parameter | AttributeTargets.Method |
+        AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.Struct | AttributeTargets.GenericParameter)]
+    sealed class ProvidesContextAttribute : Attribute { }
+
+    /// <summary>
+    /// Indicates that a parameter is a path to a file or a folder within a web project.
+    /// Path can be relative or absolute, starting from web root (~).
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Parameter)]
+    sealed class PathReferenceAttribute : Attribute
+    {
+        public PathReferenceAttribute() { }
+
+        public PathReferenceAttribute([NotNull, PathReference] string basePath)
+        {
+            BasePath = basePath;
+        }
+
+        [CanBeNull] public string BasePath { get; }
+    }
+
+    /// <summary>
+    /// An extension method marked with this attribute is processed by ReSharper code completion
+    /// as a 'Source Template'. When extension method is completed over some expression, it's source code
+    /// is automatically expanded like a template at call site.
+    /// </summary>
+    /// <remarks>
+    /// Template method body can contain valid source code and/or special comments starting with '$'.
+    /// Text inside these comments is added as source code when the template is applied. Template parameters
+    /// can be used either as additional method parameters or as identifiers wrapped in two '$' signs.
+    /// Use the <see cref="MacroAttribute"/> attribute to specify macros for parameters.
+    /// </remarks>
+    /// <example>
+    /// In this example, the 'forEach' method is a source template available over all values
+    /// of enumerable types, producing ordinary C# 'foreach' statement and placing caret inside block:
+    /// <code>
+    /// [SourceTemplate]
+    /// public static void forEach&lt;T&gt;(this IEnumerable&lt;T&gt; xs) {
+    ///   foreach (var x in xs) {
+    ///      //$ $END$
+    ///   }
+    /// }
+    /// </code>
+    /// </example>
+    [AttributeUsage(AttributeTargets.Method)]
+    sealed class SourceTemplateAttribute : Attribute { }
+
+    /// <summary>
+    /// Allows specifying a macro for a parameter of a <see cref="SourceTemplateAttribute">source template</see>.
+    /// </summary>
+    /// <remarks>
+    /// You can apply the attribute on the whole method or on any of its additional parameters. The macro expression
+    /// is defined in the <see cref="MacroAttribute.Expression"/> property. When applied on a method, the target
+    /// template parameter is defined in the <see cref="MacroAttribute.Target"/> property. To apply the macro silently
+    /// for the parameter, set the <see cref="MacroAttribute.Editable"/> property value = -1.
+    /// </remarks>
+    /// <example>
+    /// Applying the attribute on a source template method:
+    /// <code>
+    /// [SourceTemplate, Macro(Target = "item", Expression = "suggestVariableName()")]
+    /// public static void forEach&lt;T&gt;(this IEnumerable&lt;T&gt; collection) {
+    ///   foreach (var item in collection) {
+    ///     //$ $END$
+    ///   }
+    /// }
+    /// </code>
+    /// Applying the attribute on a template method parameter:
+    /// <code>
+    /// [SourceTemplate]
+    /// public static void something(this Entity x, [Macro(Expression = "guid()", Editable = -1)] string newguid) {
+    ///   /*$ var $x$Id = "$newguid$" + x.ToString();
+    ///   x.DoSomething($x$Id); */
+    /// }
+    /// </code>
+    /// </example>
+    [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Method, AllowMultiple = true)]
+    sealed class MacroAttribute : Attribute
+    {
+        /// <summary>
+        /// Allows specifying a macro that will be executed for a <see cref="SourceTemplateAttribute">source template</see>
+        /// parameter when the template is expanded.
+        /// </summary>
+        [CanBeNull] public string Expression { get; set; }
+
+        /// <summary>
+        /// Allows specifying which occurrence of the target parameter becomes editable when the template is deployed.
+        /// </summary>
+        /// <remarks>
+        /// If the target parameter is used several times in the template, only one occurrence becomes editable;
+        /// other occurrences are changed synchronously. To specify the zero-based index of the editable occurrence,
+        /// use values >= 0. To make the parameter non-editable when the template is expanded, use -1.
+        /// </remarks>>
+        public int Editable { get; set; }
+
+        /// <summary>
+        /// Identifies the target parameter of a <see cref="SourceTemplateAttribute">source template</see> if the
+        /// <see cref="MacroAttribute"/> is applied on a template method.
+        /// </summary>
+        [CanBeNull] public string Target { get; set; }
+    }
+
+    /// <summary>
+    /// Indicates how method, constructor invocation or property access
+    /// over collection type affects content of the collection.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Property)]
+    sealed class CollectionAccessAttribute : Attribute
+    {
+        public CollectionAccessAttribute(CollectionAccessType collectionAccessType)
+        {
+            CollectionAccessType = collectionAccessType;
+        }
+
+        public CollectionAccessType CollectionAccessType { get; }
+    }
+
+    [Flags]
+    enum CollectionAccessType
+    {
+        /// <summary>Method does not use or modify content of the collection.</summary>
+        None = 0,
+        /// <summary>Method only reads content of the collection but does not modify it.</summary>
+        Read = 1,
+        /// <summary>Method can change content of the collection but does not add new elements.</summary>
+        ModifyExistingContent = 2,
+        /// <summary>Method can add new elements to the collection.</summary>
+        UpdatedContent = ModifyExistingContent | 4
+    }
+
+    /// <summary>
+    /// Indicates that the marked method is assertion method, i.e. it halts control flow if
+    /// one of the conditions is satisfied. To set the condition, mark one of the parameters with
+    /// <see cref="AssertionConditionAttribute"/> attribute.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Method)]
+    sealed class AssertionMethodAttribute : Attribute { }
+
+    /// <summary>
+    /// Indicates the condition parameter of the assertion method. The method itself should be
+    /// marked by <see cref="AssertionMethodAttribute"/> attribute. The mandatory argument of
+    /// the attribute is the assertion type.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Parameter)]
+    sealed class AssertionConditionAttribute : Attribute
+    {
+        public AssertionConditionAttribute(AssertionConditionType conditionType)
+        {
+            ConditionType = conditionType;
+        }
+
+        public AssertionConditionType ConditionType { get; }
+    }
+
+    /// <summary>
+    /// Specifies assertion type. If the assertion method argument satisfies the condition,
+    /// then the execution continues. Otherwise, execution is assumed to be halted.
+    /// </summary>
+    enum AssertionConditionType
+    {
+        /// <summary>Marked parameter should be evaluated to true.</summary>
+        IS_TRUE = 0,
+        /// <summary>Marked parameter should be evaluated to false.</summary>
+        IS_FALSE = 1,
+        /// <summary>Marked parameter should be evaluated to null value.</summary>
+        IS_NULL = 2,
+        /// <summary>Marked parameter should be evaluated to not null value.</summary>
+        IS_NOT_NULL = 3,
+    }
+
+    /// <summary>
+    /// Indicates that the marked method unconditionally terminates control flow execution.
+    /// For example, it could unconditionally throw exception.
+    /// </summary>
+    [Obsolete("Use [ContractAnnotation('=> halt')] instead")]
+    [AttributeUsage(AttributeTargets.Method)]
+    sealed class TerminatesProgramAttribute : Attribute { }
+
+    /// <summary>
+    /// Indicates that method is pure LINQ method, with postponed enumeration (like Enumerable.Select,
+    /// .Where). This annotation allows inference of [InstantHandle] annotation for parameters
+    /// of delegate type by analyzing LINQ method chains.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Method)]
+    sealed class LinqTunnelAttribute : Attribute { }
+
+    /// <summary>
+    /// Indicates that IEnumerable, passed as parameter, is not enumerated.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Parameter)]
+    sealed class NoEnumerationAttribute : Attribute { }
+
+    /// <summary>
+    /// Indicates that parameter is regular expression pattern.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Parameter)]
+    sealed class RegexPatternAttribute : Attribute { }
+
+    /// <summary>
+    /// Prevents the Member Reordering feature from tossing members of the marked class.
+    /// </summary>
+    /// <remarks>
+    /// The attribute must be mentioned in your member reordering patterns
+    /// </remarks>
+    [AttributeUsage(
+        AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.Struct | AttributeTargets.Enum)]
+    sealed class NoReorderAttribute : Attribute { }
 }

@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using Sprache;
+using static JetBrains.Annotations.ImplicitUseTargetFlags;
 using static Sprache.Result;
 using static System.Linq.Enumerable;
 
 namespace Tiger.Challenge
 {
     /// <summary>Extensions to the functionality of <see cref="Parser{T}"/>.</summary>
-    [PublicAPI]
-    public static class ParserExtensions
+    [UsedImplicitly(Members)]
+    static class ParserExtensions
     {
         /// <summary>
         /// Specifies that a parse result is not to contain duplicates,

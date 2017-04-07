@@ -11,7 +11,9 @@
     <DefineConstants>$(DefineConstants);CODE_ANALYSIS</DefineConstants>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DebugType>portable</DebugType>
+    <PreserveCompilationContext>false</PreserveCompilationContext>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <CodeAnalysisRuleSet>../Tiger.ruleset</CodeAnalysisRuleSet>
     <AssemblyName>Tiger.Challenge</AssemblyName>
     <PackageId>Tiger.Challenge</PackageId>
     <PackageTags>www-authenticate;challenge;bearer;auth0;oauth;oauth2;oauth 2.0</PackageTags>
@@ -22,10 +24,22 @@
     <RepositoryUrl>https://mcpstash.cimpress.net/projects/TIGER/repos/challenge</RepositoryUrl>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <Features>IOperation</Features>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="../stylecop.json" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Sprache" Version="2.1.0" />
     <PackageReference Include="System.Collections.Immutable" Version="1.3.1" />
-    <!--<PackageReference Include="StyleCop.Analyzers" Version="1.0.0">
+
+    <!--<PackageReference Include="StyleCop.Analyzers" Version="1.1.0-beta001">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="System.Runtime.Analyzers" Version="1.2.0-beta2">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>-->
   </ItemGroup>
