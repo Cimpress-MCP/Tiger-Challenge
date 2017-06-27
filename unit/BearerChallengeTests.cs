@@ -1,9 +1,8 @@
-﻿// ReSharper disable All
-
-using System;
+﻿using System;
 using Xunit;
 using static System.StringComparer;
 using static System.UriKind;
+// ReSharper disable All
 
 namespace Tiger.Challenge.Tests
 {

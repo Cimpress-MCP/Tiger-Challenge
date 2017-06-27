@@ -49,9 +49,9 @@ namespace Tiger.Challenge
 
         [NotNull]
         static Parser<char> QuotedPair =>
-            from escape in Char('\\')
+        (from _ in Char('\\')
             from next in HTab.XOr(Sp).XOr(VChar).XOr(ObsText)
-            select next;
+            select next).Named("quoted pair");
 
         [NotNull]
         static Parser<string> QuotedString =>
