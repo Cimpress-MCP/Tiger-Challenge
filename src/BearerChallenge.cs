@@ -1,4 +1,20 @@
-﻿using System;
+﻿// <copyright file="BearerChallenge.cs" company="Cimpress, Inc.">
+//   Copyright 2017 Cimpress, Inc.
+//
+//   Licensed under the Apache License, Version 2.0 (the "License");
+//   you may not use this file except in compliance with the License.
+//   You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+//   Unless required by applicable law or agreed to in writing, software
+//   distributed under the License is distributed on an "AS IS" BASIS,
+//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//   See the License for the specific language governing permissions and
+//   limitations under the License.
+// </copyright>
+
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -15,14 +31,14 @@ namespace Tiger.Challenge
     {
         BearerChallenge(
             string realm,
-            [NotNull, ItemNotNull] IImmutableList<string> scope,
+            [ItemNotNull] ImmutableArray<string> scope,
             string error,
             string errorDescription,
             Uri errorUri,
             [NotNull] IImmutableDictionary<string, string> extensions)
         {
             Realm = realm;
-            Scope = scope ?? throw new ArgumentNullException(nameof(scope));
+            Scope = scope;
             Error = error;
             ErrorDescription = errorDescription;
             ErrorUri = errorUri;
@@ -39,7 +55,7 @@ namespace Tiger.Challenge
         /// </summary>
         /// <remarks>Corresponds to the key <c>scope</c>.</remarks>
         [NotNull, ItemNotNull]
-        public IImmutableList<string> Scope { get; }
+        public ImmutableArray<string> Scope { get; }
 
         /// <summary>Gets the title of the authentication error.</summary>
         /// <remarks>Corresponds to the key <c>error</c>.</remarks>
@@ -74,7 +90,7 @@ namespace Tiger.Challenge
                 output.Add($@"{RealmKey}=""{Realm}""");
             }
 
-            if (Scope.Count != 0)
+            if (Scope.Length != 0)
             {
                 output.Add($@"{ScopeKey}=""{string.Join(" ", Scope)}""");
             }

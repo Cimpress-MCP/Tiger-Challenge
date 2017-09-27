@@ -1,4 +1,20 @@
-﻿using System;
+﻿// <copyright file="BearerChallenge.Parse.cs" company="Cimpress, Inc.">
+//   Copyright 2017 Cimpress, Inc.
+//
+//   Licensed under the Apache License, Version 2.0 (the "License");
+//   you may not use this file except in compliance with the License.
+//   You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+//   Unless required by applicable law or agreed to in writing, software
+//   distributed under the License is distributed on an "AS IS" BASIS,
+//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//   See the License for the specific language governing permissions and
+//   limitations under the License.
+// </copyright>
+
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using JetBrains.Annotations;
@@ -19,59 +35,50 @@ namespace Tiger.Challenge
         const string ErrorDescriptionKey = "error_description";
         const string ErrorUriKey = "error_uri";
 
-        static readonly ImmutableArray<string> _knownKeys =
+        static readonly ImmutableArray<string> s_knownKeys =
             ImmutableArray.Create(RealmKey, ScopeKey, ErrorKey, ErrorDescriptionKey, ErrorUriKey);
 
-        [NotNull]
-        static Parser<char> HTab => Char('\t').Named("HTAB");
+        static readonly Parser<char> s_hTab = Char('\t').Named("HTAB");
 
-        [NotNull]
-        static Parser<char> Sp => Char(' ').Named("SP");
+        static readonly Parser<char> s_sp = Char(' ').Named("SP");
 
-        [NotNull]
-        static Parser<char> VChar =>
+        static readonly Parser<char> s_vChar =
             Char(c => c >= 0x21 && c <= 0x7E, "visible (printing) characters").Named("VCHAR");
 
-        static Parser<char> ObsText =>
+        static readonly Parser<char> s_obsText =
             Char(c => c >= 0x80 && c <= 0xFF, "observable text").Named("obs-text");
 
-        [NotNull]
-        static Parser<char> QdText =>
-            HTab.XOr(Sp)
+        static readonly Parser<char> s_qdText =
+            s_hTab.XOr(s_sp)
                 .XOr(Char('!'))
                 .XOr(Char(c => c >= 0x23 && c <= 0x5B, "%x23-5B"))
                 .XOr(Char(c => c >= 0x5D && c <= 0x7E, "%x5D-7E"))
-                .XOr(ObsText)
+                .XOr(s_obsText)
                 .Named("QDTEXT");
 
-        [NotNull]
-        static Parser<char> DQuote => Char('"').Named("DQUOTE");
+        static readonly Parser<char> s_dQuote = Char('"').Named("DQUOTE");
 
-        [NotNull]
-        static Parser<char> QuotedPair =>
-        (from _ in Char('\\')
-            from next in HTab.XOr(Sp).XOr(VChar).XOr(ObsText)
+        static readonly Parser<char> s_quotedPair =
+        (from slash in Char('\\')
+            from next in s_hTab.XOr(s_sp).XOr(s_vChar).XOr(s_obsText)
             select next).Named("quoted pair");
 
-        [NotNull]
-        static Parser<string> QuotedString =>
-            QdText
-                .XOr(QuotedPair)
+        static readonly Parser<string> s_quotedString =
+            s_qdText
+                .XOr(s_quotedPair)
                 .XMany()
                 .Text()
-                .Contained(DQuote, DQuote)
+                .Contained(s_dQuote, s_dQuote)
                 .Named("quoted-string");
 
-        [NotNull]
-        static Parser<string> Token =>
+        static readonly Parser<string> s_token =
             LetterOrDigit
                 .XOr(Chars(@"!#$%&'*+-.^_`|~"))
                 .XAtLeastOnce()
                 .Text()
                 .Named("token");
 
-        [NotNull]
-        static Parser<string> ScopeToken =>
+        static readonly Parser<string> s_scopeToken =
             Char('!')
                 .XOr(Char(c => c >= 0x23 && c <= 0x5B, "%x23-5B"))
                 .XOr(Char(c => c >= 0x5D && c <= 0x7E, "%x5D-7E"))
@@ -79,28 +86,25 @@ namespace Tiger.Challenge
                 .Text()
                 .Named("scope-token");
 
-        [NotNull]
-        static Parser<KeyValuePair<string, string>> AuthParam =>
-            from key in Token
+        static readonly Parser<KeyValuePair<string, string>> s_authParam =
+            from key in s_token
             from equalsSign in Char('=').Token()
-            from value in Token.XOr(QuotedString)
+            from value in s_token.XOr(s_quotedString)
             select new KeyValuePair<string, string>(key, value);
 
-        [NotNull]
-        static Parser<IImmutableDictionary<string, string>> AuthParams =>
-            AuthParam.XDelimitedBy(Char(',').Token())
+        static readonly Parser<ImmutableDictionary<string, string>> s_authParams =
+            s_authParam.XDelimitedBy(Char(',').Token())
                 .XOr(Return(Empty<KeyValuePair<string, string>>()))
                 .End()
                 .WithoutDuplicates(new ChallengeKeyComparer<string>(OrdinalIgnoreCase))
                 .Select(aps => aps.ToImmutableDictionary(OrdinalIgnoreCase));
 
-        [NotNull]
-        static Parser<IImmutableList<string>> Scopes =>
-            ScopeToken.XDelimitedBy(Sp.XAtLeastOnce())
+        static readonly Parser<ImmutableArray<string>> s_scopes =
+            s_scopeToken.XDelimitedBy(s_sp.XAtLeastOnce())
                 .XOr(Return(Empty<string>()))
                 .End()
                 .WithoutDuplicates(OrdinalIgnoreCase)
-                .Select(ImmutableList.CreateRange);
+                .Select(ImmutableArray.CreateRange);
 
         /// <summary>Parses a string to produce a <see cref="BearerChallenge"/>.</summary>
         /// <param name="challengeParameter">
@@ -119,7 +123,7 @@ namespace Tiger.Challenge
             IImmutableDictionary<string, string> authParams;
             try
             {
-                authParams = AuthParams.Parse(challengeParameter);
+                authParams = s_authParams.Parse(challengeParameter);
             }
             catch (ParseException pe)
             {
@@ -127,10 +131,10 @@ namespace Tiger.Challenge
             }
 
             var realm = authParams.GetValueOrDefault(RealmKey);
-            IImmutableList<string> scope;
+            ImmutableArray<string> scope;
             try
             {
-                scope = Scopes.Parse(authParams.GetValueOrDefault(ScopeKey, string.Empty));
+                scope = s_scopes.Parse(authParams.GetValueOrDefault(ScopeKey, string.Empty));
             }
             catch (ParseException pe)
             {
@@ -154,7 +158,7 @@ namespace Tiger.Challenge
                 }
             }
 
-            var extensions = authParams.RemoveRange(_knownKeys);
+            var extensions = authParams.RemoveRange(s_knownKeys);
 
             return new BearerChallenge(realm, scope, error, errorDescription, errorUri, extensions);
         }
@@ -185,18 +189,18 @@ namespace Tiger.Challenge
         {
             if (challengeParameter == null) { throw new ArgumentNullException(nameof(challengeParameter)); }
 
-            var authParams = AuthParams.TryParse(challengeParameter);
+            var authParams = s_authParams.TryParse(challengeParameter);
             if (!authParams.WasSuccessful)
             {
-                result = default(BearerChallenge);
+                result = default;
                 return false;
             }
 
             var realm = authParams.Value.GetValueOrDefault(RealmKey);
-            var scope = Scopes.TryParse(authParams.Value.GetValueOrDefault(ScopeKey, string.Empty));
+            var scope = s_scopes.TryParse(authParams.Value.GetValueOrDefault(ScopeKey, string.Empty));
             if (!scope.WasSuccessful)
             {
-                result = default(BearerChallenge);
+                result = default;
                 return false;
             }
 
@@ -209,12 +213,12 @@ namespace Tiger.Challenge
             {
                 if (!Uri.TryCreate(authParams.Value.GetValueOrDefault(ErrorUriKey), RelativeOrAbsolute, out errorUri))
                 {
-                    result = default(BearerChallenge);
+                    result = default;
                     return false;
                 }
             }
 
-            var extensions = authParams.Value.RemoveRange(_knownKeys);
+            var extensions = authParams.Value.RemoveRange(s_knownKeys);
 
             result = new BearerChallenge(realm, scope.Value, error, errorDescription, errorUri, extensions);
             return true;

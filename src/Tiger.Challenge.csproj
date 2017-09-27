@@ -17,15 +17,18 @@
     <AssemblyName>Tiger.Challenge</AssemblyName>
     <PackageId>Tiger.Challenge</PackageId>
     <PackageTags>www-authenticate;challenge;bearer;auth0;oauth;oauth2;oauth 2.0</PackageTags>
-    <PackageReleaseNotes>The `null`ability of the `out` parameter of `BearerChallenge.TryParse(string, out BearerChallenge)` has been corrected.</PackageReleaseNotes>
-    <PackageProjectUrl>https://mcpstash.cimpress.net/projects/TIGER</PackageProjectUrl>
-    <PackageIconUrl>https://mcpstash.cimpress.net/projects/TIGER/repos/challenge/browse/tiger_logo.png?raw</PackageIconUrl>
+    <PackageReleaseNotes>⁃ The `null`ability of the `out` parameter of `BearerChallenge.TryParse(string, out BearerChallenge)` has been corrected.
+</PackageReleaseNotes>
+    <PackageProjectUrl>https://github.com/Cimpress-MCP/Tiger-Challenge</PackageProjectUrl>
+    <PackageLicenseUrl>https://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>  
+    <PackageIconUrl>https://raw.githubusercontent.com/Cimpress-MCP/Tiger-Challenge/master/tiger_logo.png</PackageIconUrl>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://mcpstash.cimpress.net/projects/TIGER/repos/challenge</RepositoryUrl>
+    <RepositoryUrl>https://github.com/Cimpress-MCP/Tiger-Challenge.git</RepositoryUrl>
   </PropertyGroup>
 
   <PropertyGroup>
     <Features>IOperation</Features>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -34,14 +37,11 @@
 
   <ItemGroup>
     <PackageReference Include="Sprache" Version="2.1.0" />
-    <PackageReference Include="System.Collections.Immutable" Version="1.3.1" />
+    <PackageReference Include="System.Collections.Immutable" Version="1.4.0" />
 
-    <!--<PackageReference Include="StyleCop.Analyzers" Version="1.1.0-beta001">
-      <PrivateAssets>All</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="System.Runtime.Analyzers" Version="1.2.0-beta2">
-      <PrivateAssets>All</PrivateAssets>
-    </PackageReference>-->
+    <PackageReference Include="Microsoft.NetCore.Analyzers" Version="2.3.0-beta1" PrivateAssets="All" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.0-beta004" PrivateAssets="All" />
+    <PackageReference Include="Text.Analyzers" Version="2.3.0-beta1" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>
