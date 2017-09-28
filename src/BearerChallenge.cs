@@ -35,7 +35,7 @@ namespace Tiger.Challenge
             string error,
             string errorDescription,
             Uri errorUri,
-            [NotNull] IImmutableDictionary<string, string> extensions)
+            [NotNull] ImmutableDictionary<string, string> extensions)
         {
             Realm = realm;
             Scope = scope;
@@ -54,7 +54,7 @@ namespace Tiger.Challenge
         /// of the challenge.
         /// </summary>
         /// <remarks>Corresponds to the key <c>scope</c>.</remarks>
-        [NotNull, ItemNotNull]
+        [ItemNotNull]
         public ImmutableArray<string> Scope { get; }
 
         /// <summary>Gets the title of the authentication error.</summary>

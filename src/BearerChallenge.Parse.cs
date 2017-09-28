@@ -120,7 +120,7 @@ namespace Tiger.Challenge
         {
             if (challengeParameter == null) { throw new ArgumentNullException(nameof(challengeParameter)); }
 
-            IImmutableDictionary<string, string> authParams;
+            ImmutableDictionary<string, string> authParams;
             try
             {
                 authParams = s_authParams.Parse(challengeParameter);
