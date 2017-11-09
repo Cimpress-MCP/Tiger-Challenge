@@ -48,7 +48,6 @@ namespace Tiger.Challenge.Tests
             // assert
             Assert.NotNull(actual);
             Assert.Null(actual.Realm);
-            Assert.NotNull(actual.Scope);
             Assert.Empty(actual.Scope);
             Assert.Null(actual.Error);
             Assert.Null(actual.ErrorDescription);
@@ -70,7 +69,6 @@ namespace Tiger.Challenge.Tests
             Assert.True(success);
             Assert.NotNull(actual);
             Assert.Null(actual.Realm);
-            Assert.NotNull(actual.Scope);
             Assert.Empty(actual.Scope);
             Assert.Null(actual.Error);
             Assert.Null(actual.ErrorDescription);
@@ -120,11 +118,10 @@ namespace Tiger.Challenge.Tests
 
             // assert
             Assert.NotNull(actual);
-            Assert.Equal(realm, actual.Realm);
-            Assert.NotNull(actual.Scope);
+            Assert.Equal(realm, actual.Realm, Ordinal);
             Assert.Empty(actual.Scope);
-            Assert.Equal(error, actual.Error);
-            Assert.Equal(errorDescription, actual.ErrorDescription);
+            Assert.Equal(error, actual.Error, Ordinal);
+            Assert.Equal(errorDescription, actual.ErrorDescription, Ordinal);
             Assert.Null(actual.ErrorUri);
             Assert.NotNull(actual.Extensions);
             Assert.Empty(actual.Extensions);
@@ -145,11 +142,10 @@ namespace Tiger.Challenge.Tests
             // assert
             Assert.True(success);
             Assert.NotNull(actual);
-            Assert.Equal(realm, actual.Realm);
-            Assert.NotNull(actual.Scope);
+            Assert.Equal(realm, actual.Realm, Ordinal);
             Assert.Empty(actual.Scope);
-            Assert.Equal(error, actual.Error);
-            Assert.Equal(errorDescription, actual.ErrorDescription);
+            Assert.Equal(error, actual.Error, Ordinal);
+            Assert.Equal(errorDescription, actual.ErrorDescription, Ordinal);
             Assert.Null(actual.ErrorUri);
             Assert.NotNull(actual.Extensions);
             Assert.Empty(actual.Extensions);
@@ -195,11 +191,10 @@ namespace Tiger.Challenge.Tests
 
             // assert
             Assert.NotNull(actual);
-            Assert.Equal(realm, actual.Realm);
-            Assert.NotNull(actual.Scope);
+            Assert.Equal(realm, actual.Realm, Ordinal);
             Assert.Empty(actual.Scope);
-            Assert.Equal(error, actual.Error);
-            Assert.Equal(errorDescription, actual.ErrorDescription);
+            Assert.Equal(error, actual.Error, Ordinal);
+            Assert.Equal(errorDescription, actual.ErrorDescription, Ordinal);
             Assert.Null(actual.ErrorUri);
             Assert.NotNull(actual.Extensions);
             Assert.Empty(actual.Extensions);
@@ -220,11 +215,10 @@ namespace Tiger.Challenge.Tests
             // assert
             Assert.True(success);
             Assert.NotNull(actual);
-            Assert.Equal(realm, actual.Realm);
-            Assert.NotNull(actual.Scope);
+            Assert.Equal(realm, actual.Realm, Ordinal);
             Assert.Empty(actual.Scope);
-            Assert.Equal(error, actual.Error);
-            Assert.Equal(errorDescription, actual.ErrorDescription);
+            Assert.Equal(error, actual.Error, Ordinal);
+            Assert.Equal(errorDescription, actual.ErrorDescription, Ordinal);
             Assert.Null(actual.ErrorUri);
             Assert.NotNull(actual.Extensions);
             Assert.Empty(actual.Extensions);
@@ -283,16 +277,15 @@ namespace Tiger.Challenge.Tests
 
             // assert
             Assert.NotNull(actual);
-            Assert.Equal(realm, actual.Realm);
-            Assert.NotNull(actual.Scope);
+            Assert.Equal(realm, actual.Realm, Ordinal);
             Assert.Equal(scope, actual.Scope, Ordinal);
-            Assert.Equal(error, actual.Error);
-            Assert.Equal(errorDescription, actual.ErrorDescription);
+            Assert.Equal(error, actual.Error, Ordinal);
+            Assert.Equal(errorDescription, actual.ErrorDescription, Ordinal);
             Assert.Null(actual.ErrorUri);
             Assert.NotNull(actual.Extensions);
-            var extension = Assert.Single(actual.Extensions);
-            Assert.Equal("authorization_uri", extension.Key);
-            Assert.Equal(authorizationUri.AbsoluteUri, extension.Value);
+            var (key, value) = Assert.Single(actual.Extensions);
+            Assert.Equal("authorization_uri", key, Ordinal);
+            Assert.Equal(authorizationUri.AbsoluteUri, value, Ordinal);
         }
 
         [Fact(DisplayName = "A typical challenge produces the correct data.")]
@@ -312,16 +305,15 @@ namespace Tiger.Challenge.Tests
             // assert
             Assert.True(success);
             Assert.NotNull(actual);
-            Assert.Equal(realm, actual.Realm);
-            Assert.NotNull(actual.Scope);
+            Assert.Equal(realm, actual.Realm, Ordinal);
             Assert.Equal(scope, actual.Scope, Ordinal);
-            Assert.Equal(error, actual.Error);
-            Assert.Equal(errorDescription, actual.ErrorDescription);
+            Assert.Equal(error, actual.Error, Ordinal);
+            Assert.Equal(errorDescription, actual.ErrorDescription, Ordinal);
             Assert.Null(actual.ErrorUri);
             Assert.NotNull(actual.Extensions);
-            var extension = Assert.Single(actual.Extensions);
-            Assert.Equal("authorization_uri", extension.Key);
-            Assert.Equal(authorizationUri.AbsoluteUri, extension.Value);
+            var (key, value) = Assert.Single(actual.Extensions);
+            Assert.Equal("authorization_uri", key, Ordinal);
+            Assert.Equal(authorizationUri.AbsoluteUri, value, Ordinal);
         }
 
         [Fact(DisplayName = "A challenge is valid when converted to a string.")]
@@ -378,7 +370,7 @@ namespace Tiger.Challenge.Tests
             // assert
             Assert.NotNull(actual);
             var formatException = Assert.IsType<FormatException>(actual);
-            Assert.Contains("correct format", formatException.Message);
+            Assert.Contains("correct format", formatException.Message, StringComparison.Ordinal);
         }
 
         [Fact(DisplayName = "A duplicate key causes a parsing failure.")]
