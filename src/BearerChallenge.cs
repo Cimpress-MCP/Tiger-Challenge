@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using JetBrains.Annotations;
+using static System.StringComparer;
 
 namespace Tiger.Challenge
 {
@@ -122,17 +123,27 @@ namespace Tiger.Challenge
         [Pure]
         public override int GetHashCode()
         {
+#if NETCOREAPP2_1
+            var hash = default(HashCode);
+            hash.Add(Realm, Ordinal);
+            hash.Add(Scope);
+            hash.Add(Error, Ordinal);
+            hash.Add(ErrorDescription, Ordinal);
+            hash.Add(ErrorUri);
+            hash.Add(Extensions);
+            return hash.ToHashCode();
+#else
             unchecked
             {
                 var hash = 17;
-                hash = hash * 23 + (Realm?.GetHashCode() ?? 0);
-                hash = hash * 23 + Scope.GetHashCode();
-                hash = hash * 23 + (Error?.GetHashCode() ?? 0);
-                hash = hash * 23 + (ErrorDescription?.GetHashCode() ?? 0);
-                hash = hash * 23 + (ErrorUri?.GetHashCode() ?? 0);
-                hash = hash * 23 + Extensions.GetHashCode();
-                return hash;
+                hash = (hash * 23) + (Realm?.GetHashCode() ?? 0);
+                hash = (hash * 23) + Scope.GetHashCode();
+                hash = (hash * 23) + (Error?.GetHashCode() ?? 0);
+                hash = (hash * 23) + (ErrorDescription?.GetHashCode() ?? 0);
+                hash = (hash * 23) + (ErrorUri?.GetHashCode() ?? 0);
+                return (hash * 23) + Extensions.GetHashCode();
             }
+#endif
         }
     }
 }

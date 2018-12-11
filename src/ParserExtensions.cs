@@ -19,9 +19,9 @@ using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using Sprache;
+using static System.Linq.Enumerable;
 using static JetBrains.Annotations.ImplicitUseTargetFlags;
 using static Sprache.Result;
-using static System.Linq.Enumerable;
 
 namespace Tiger.Challenge
 {

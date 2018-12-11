@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
+using static System.StringComparer;
 
 namespace Tiger.Challenge
 {
@@ -53,6 +54,15 @@ namespace Tiger.Challenge
             _keyComparer.Equals(x.Key, y.Key);
 
         /// <inheritdoc />
-        public int GetHashCode(KeyValuePair<string, TValue> obj) => obj.Key?.GetHashCode() ?? 0;
+        public int GetHashCode(KeyValuePair<string, TValue> obj)
+        {
+#if NETCOREAPP2_1
+            var hash = default(HashCode);
+            hash.Add(obj.Key, Ordinal);
+            return hash.ToHashCode();
+#else
+            return obj.Key?.GetHashCode() ?? 0;
+#endif
+        }
     }
 }

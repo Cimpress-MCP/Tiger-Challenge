@@ -1,3 +1,7 @@
+### What's new in 2.0.0 (Released 2018-12-11)
+
+* The library has grown compatibility with .NET Standard 2.0.
+
 ### What's new in 1.0.2 (Released 2017-09-28)
 
 * Performance of parsing has been improved.
