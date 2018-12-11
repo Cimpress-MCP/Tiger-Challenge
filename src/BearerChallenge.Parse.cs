@@ -19,10 +19,10 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using JetBrains.Annotations;
 using Sprache;
-using static Sprache.Parse;
 using static System.Linq.Enumerable;
 using static System.StringComparer;
 using static System.UriKind;
+using static Sprache.Parse;
 
 namespace Tiger.Challenge
 {
@@ -73,7 +73,7 @@ namespace Tiger.Challenge
 
         static readonly Parser<string> s_token =
             LetterOrDigit
-                .XOr(Chars(@"!#$%&'*+-.^_`|~"))
+                .XOr(Chars("!#$%&'*+-.^_`|~"))
                 .XAtLeastOnce()
                 .Text()
                 .Named("token");
@@ -154,7 +154,7 @@ namespace Tiger.Challenge
                 }
                 catch (UriFormatException ufe)
                 {
-                    throw new FormatException(@"Input string was not in a correct format.", ufe);
+                    throw new FormatException("Input string was not in a correct format.", ufe);
                 }
             }
 

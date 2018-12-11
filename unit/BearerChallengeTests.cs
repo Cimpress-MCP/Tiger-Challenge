@@ -81,7 +81,7 @@ namespace Tiger.Challenge.Tests
         public void EmptyScope_Parses()
         {
             // arrange
-            var challenge = @"realm=""cimpress.auth0.com"", scope="""", error=""invalid_token"", error_description=""The token is expired""";
+            const string challenge = @"realm=""cimpress.auth0.com"", scope="""", error=""invalid_token"", error_description=""The token is expired""";
 
             // act
             var actual = Record.Exception(() => BearerChallenge.Parse(challenge));
@@ -94,7 +94,7 @@ namespace Tiger.Challenge.Tests
         public void EmptyScope_Parses_Try()
         {
             // arrange
-            var challenge = @"realm=""cimpress.auth0.com"", scope="""", error=""invalid_token"", error_description=""The token is expired""";
+            const string challenge = @"realm=""cimpress.auth0.com"", scope="""", error=""invalid_token"", error_description=""The token is expired""";
 
             // act
             var success = BearerChallenge.TryParse(challenge, out var actual);
@@ -108,9 +108,9 @@ namespace Tiger.Challenge.Tests
         public void EmptyScope_Results_EmptyScope()
         {
             // arrange
-            var realm = "cimpress.auth0.com";
-            var error = "invalid_token";
-            var errorDescription = "The token is expired";
+            const string realm = "cimpress.auth0.com";
+            const string error = "invalid_token";
+            const string errorDescription = "The token is expired";
             var challenge = $@"realm=""{realm}"", scope="""", error=""{error}"", error_description=""{errorDescription}""";
 
             // act
@@ -131,9 +131,9 @@ namespace Tiger.Challenge.Tests
         public void EmptyScope_Results_EmptyScope_Try()
         {
             // arrange
-            var realm = "cimpress.auth0.com";
-            var error = "invalid_token";
-            var errorDescription = "The token is expired";
+            const string realm = "cimpress.auth0.com";
+            const string error = "invalid_token";
+            const string errorDescription = "The token is expired";
             var challenge = $@"realm=""{realm}"", scope="""", error=""{error}"", error_description=""{errorDescription}""";
 
             // act
@@ -155,7 +155,7 @@ namespace Tiger.Challenge.Tests
         public void ThreeSixtyNoScope_Parses()
         {
             // arrange
-            var challenge = @"realm=""cimpress.auth0.com"", error=""invalid_token"", error_description=""The token is expired""";
+            const string challenge = @"realm=""cimpress.auth0.com"", error=""invalid_token"", error_description=""The token is expired""";
 
             // act
             var actual = Record.Exception(() => BearerChallenge.Parse(challenge));
@@ -168,7 +168,7 @@ namespace Tiger.Challenge.Tests
         public void ThreeSixtyNoScope_Parses_Try()
         {
             // arrange
-            var challenge = @"realm=""cimpress.auth0.com"", error=""invalid_token"", error_description=""The token is expired""";
+            const string challenge = @"realm=""cimpress.auth0.com"", error=""invalid_token"", error_description=""The token is expired""";
 
             // act
             var success = BearerChallenge.TryParse(challenge, out var actual);
@@ -181,9 +181,9 @@ namespace Tiger.Challenge.Tests
         public void ThreeSixtyNoScope_Results_EmptyScope()
         {
             // arrange
-            var realm = "cimpress.auth0.com";
-            var error = "invalid_token";
-            var errorDescription = "The token is expired";
+            const string realm = "cimpress.auth0.com";
+            const string error = "invalid_token";
+            const string errorDescription = "The token is expired";
             var challenge = $@"realm=""{realm}"", error=""{error}"", error_description=""{errorDescription}""";
 
             // act
@@ -204,9 +204,9 @@ namespace Tiger.Challenge.Tests
         public void ThreeSixtyNoScope_Results_EmptyScope_Try()
         {
             // arrange
-            var realm = "cimpress.auth0.com";
-            var error = "invalid_token";
-            var errorDescription = "The token is expired";
+            const string realm = "cimpress.auth0.com";
+            const string error = "invalid_token";
+            const string errorDescription = "The token is expired";
             var challenge = $@"realm=""{realm}"", error=""{error}"", error_description=""{errorDescription}""";
 
             // act
@@ -228,11 +228,11 @@ namespace Tiger.Challenge.Tests
         public void TypicalChallenge_Parses()
         {
             // arrange
-            var realm = "cimpress.auth0.com";
+            const string realm = "cimpress.auth0.com";
             var scope = new [] { "openid" };
-            var error = "invalid_token";
-            var errorDescription = "The token is expired";
-            var authorizationUri = new Uri(@"https://cimpress.auth0.com/oauth/token", Absolute);
+            const string error = "invalid_token";
+            const string errorDescription = "The token is expired";
+            var authorizationUri = new Uri("https://cimpress.auth0.com/oauth/token", Absolute);
             var challenge = $@"realm=""{realm}"", authorization_uri=""{authorizationUri}"", scope=""{string.Join(" ", scope)}"", error=""{error}"", error_description=""{errorDescription}""";
 
             // act
@@ -246,11 +246,11 @@ namespace Tiger.Challenge.Tests
         public void TypicalChallenge_Parses_Try()
         {
             // arrange
-            var realm = "cimpress.auth0.com";
+            const string realm = "cimpress.auth0.com";
             var scope = new[] { "openid" };
-            var error = "invalid_token";
-            var errorDescription = "The token is expired";
-            var authorizationUri = new Uri(@"https://cimpress.auth0.com/oauth/token", Absolute);
+            const string error = "invalid_token";
+            const string errorDescription = "The token is expired";
+            var authorizationUri = new Uri("https://cimpress.auth0.com/oauth/token", Absolute);
             var challenge = $@"realm=""{realm}"", authorization_uri=""{authorizationUri}"", scope=""{string.Join(" ", scope)}"", error=""{error}"", error_description=""{errorDescription}""";
 
             // act
@@ -265,11 +265,11 @@ namespace Tiger.Challenge.Tests
         public void TypicalChallenge_Results()
         {
             // arrange
-            var realm = "cimpress.auth0.com";
+            const string realm = "cimpress.auth0.com";
             var scope = new[] { "openid", "profile" };
-            var error = "invalid_token";
-            var errorDescription = "The token is expired";
-            var authorizationUri = new Uri(@"https://cimpress.auth0.com/oauth/token", Absolute);
+            const string error = "invalid_token";
+            const string errorDescription = "The token is expired";
+            var authorizationUri = new Uri("https://cimpress.auth0.com/oauth/token", Absolute);
             var challenge = $@"realm=""{realm}"", authorization_uri=""{authorizationUri}"", scope=""{string.Join(" ", scope)}"", error=""{error}"", error_description=""{errorDescription}""";
 
             // act
@@ -283,8 +283,7 @@ namespace Tiger.Challenge.Tests
             Assert.Equal(errorDescription, actual.ErrorDescription, Ordinal);
             Assert.Null(actual.ErrorUri);
             Assert.NotNull(actual.Extensions);
-            var (key, value) = Assert.Single(actual.Extensions);
-            Assert.Equal("authorization_uri", key, Ordinal);
+            var value = Assert.Contains("authorization_uri", actual.Extensions);
             Assert.Equal(authorizationUri.AbsoluteUri, value, Ordinal);
         }
 
@@ -292,11 +291,11 @@ namespace Tiger.Challenge.Tests
         public void TypicalChallenge_Results_Try()
         {
             // arrange
-            var realm = "cimpress.auth0.com";
+            const string realm = "cimpress.auth0.com";
             var scope = new[] { "openid", "profile" };
-            var error = "invalid_token";
-            var errorDescription = "The token is expired";
-            var authorizationUri = new Uri(@"https://cimpress.auth0.com/oauth/token", Absolute);
+            const string error = "invalid_token";
+            const string errorDescription = "The token is expired";
+            var authorizationUri = new Uri("https://cimpress.auth0.com/oauth/token", Absolute);
             var challenge = $@"realm=""{realm}"", authorization_uri=""{authorizationUri}"", scope=""{string.Join(" ", scope)}"", error=""{error}"", error_description=""{errorDescription}""";
 
             // act
@@ -311,8 +310,7 @@ namespace Tiger.Challenge.Tests
             Assert.Equal(errorDescription, actual.ErrorDescription, Ordinal);
             Assert.Null(actual.ErrorUri);
             Assert.NotNull(actual.Extensions);
-            var (key, value) = Assert.Single(actual.Extensions);
-            Assert.Equal("authorization_uri", key, Ordinal);
+            var value = Assert.Contains("authorization_uri", actual.Extensions);
             Assert.Equal(authorizationUri.AbsoluteUri, value, Ordinal);
         }
 
@@ -320,7 +318,7 @@ namespace Tiger.Challenge.Tests
         public void ToString_Valid()
         {
             // arrange
-            var challenge = @"realm=""cimpress.auth0.com"", scope=""client_id=0NBlSon1C4tJEVWS6GJRjwju5NxKHfBF service=https://orr.fen.cimpress.io"", error=""invalid_token"", error_description=""The token is expired""";
+            const string challenge = @"realm=""cimpress.auth0.com"", scope=""client_id=0NBlSon1C4tJEVWS6GJRjwju5NxKHfBF service=https://orr.fen.cimpress.io"", error=""invalid_token"", error_description=""The token is expired""";
 
             // act
             var actual = Record.Exception(() => BearerChallenge.Parse(BearerChallenge.Parse(challenge).ToString()));
@@ -333,7 +331,7 @@ namespace Tiger.Challenge.Tests
         public void BadQuotes_Failure()
         {
             // arrange
-            var challenge = @"realm=""cimpress.auth0.com, scope=""client_id=0NBlSon1C4tJEVWS6GJRjwju5NxKHfBF service=https://orr.fen.cimpress.io"", error=""invalid_token"", error_description=""The token is expired""";
+            const string challenge = @"realm=""cimpress.auth0.com, scope=""client_id=0NBlSon1C4tJEVWS6GJRjwju5NxKHfBF service=https://orr.fen.cimpress.io"", error=""invalid_token"", error_description=""The token is expired""";
 
             // act
             var actual = Record.Exception(() => BearerChallenge.Parse(challenge));
@@ -348,7 +346,7 @@ namespace Tiger.Challenge.Tests
         public void BadQuotes_Failure_Try()
         {
             // arrange
-            var challenge = @"realm=""cimpress.auth0.com, scope=""client_id=0NBlSon1C4tJEVWS6GJRjwju5NxKHfBF service=https://orr.fen.cimpress.io"", error=""invalid_token"", error_description=""The token is expired""";
+            const string challenge = @"realm=""cimpress.auth0.com, scope=""client_id=0NBlSon1C4tJEVWS6GJRjwju5NxKHfBF service=https://orr.fen.cimpress.io"", error=""invalid_token"", error_description=""The token is expired""";
 
             // act
             var success = BearerChallenge.TryParse(challenge, out var actual);
@@ -362,7 +360,7 @@ namespace Tiger.Challenge.Tests
         public void DuplicateKey_Failure()
         {
             // arrange
-            var challenge = @"realm=""cimpress.auth0.com"", realm=""cimpress.example.com"", scope=""client_id=0NBlSon1C4tJEVWS6GJRjwju5NxKHfBF service=https://orr.fen.cimpress.io"", error=""invalid_token"", error_description=""The token is expired""";
+            const string challenge = @"realm=""cimpress.auth0.com"", realm=""cimpress.example.com"", scope=""client_id=0NBlSon1C4tJEVWS6GJRjwju5NxKHfBF service=https://orr.fen.cimpress.io"", error=""invalid_token"", error_description=""The token is expired""";
 
             // act
             var actual = Record.Exception(() => BearerChallenge.Parse(challenge));
@@ -377,7 +375,7 @@ namespace Tiger.Challenge.Tests
         public void DuplicateKey_Failure_Try()
         {
             // arrange
-            var challenge = @"realm=""cimpress.auth0.com"", realm=""cimpress.example.com"", scope=""client_id=0NBlSon1C4tJEVWS6GJRjwju5NxKHfBF service=https://orr.fen.cimpress.io"", error=""invalid_token"", error_description=""The token is expired""";
+            const string challenge = @"realm=""cimpress.auth0.com"", realm=""cimpress.example.com"", scope=""client_id=0NBlSon1C4tJEVWS6GJRjwju5NxKHfBF service=https://orr.fen.cimpress.io"", error=""invalid_token"", error_description=""The token is expired""";
 
             // act
             var success = BearerChallenge.TryParse(challenge, out var actual);
