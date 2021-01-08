@@ -1,3 +1,7 @@
+### What's new in 3.0.0 (Released 2020-01-08)
+
+* The library has grown compatibility with .NET Standard 2.1 and .NET Core 3.1.
+
 ### What's new in 2.0.0 (Released 2018-12-11)
 
 * The library has grown compatibility with .NET Standard 2.0.

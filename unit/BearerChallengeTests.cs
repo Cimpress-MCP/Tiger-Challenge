@@ -1,8 +1,23 @@
-﻿using System;
+﻿// <copyright file="BearerChallengeTests.cs" company="Cimpress, Inc.">
+//   Copyright 2020 Cimpress, Inc.
+//
+//   Licensed under the Apache License, Version 2.0 (the "License") –
+//   you may not use this file except in compliance with the License.
+//   You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+//   Unless required by applicable law or agreed to in writing, software
+//   distributed under the License is distributed on an "AS IS" BASIS,
+//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//   See the License for the specific language governing permissions and
+//   limitations under the License.
+// </copyright>
+
+using System;
 using Xunit;
 using static System.StringComparer;
 using static System.UriKind;
-// ReSharper disable All
 
 namespace Tiger.Challenge.Tests
 {
@@ -12,26 +27,16 @@ namespace Tiger.Challenge.Tests
         [Fact(DisplayName = "An empty string can be parsed as a challenge.")]
         public void EmptyChallenge_Parses()
         {
-            // arrange
-            var challenge = string.Empty;
+            var actual = Record.Exception(() => BearerChallenge.Parse(string.Empty));
 
-            // act
-            var actual = Record.Exception(() => BearerChallenge.Parse(challenge));
-
-            // assert
             Assert.Null(actual);
         }
 
         [Fact(DisplayName = "An empty string can be parsed as a challenge.")]
         public void EmptyChallenge_Parses_Try()
         {
-            // arrange
-            var challenge = string.Empty;
+            var success = BearerChallenge.TryParse(string.Empty, out var actual);
 
-            // act
-            var success = BearerChallenge.TryParse(challenge, out var actual);
-
-            // assert
             Assert.True(success);
             Assert.NotNull(actual);
         }
@@ -39,13 +44,8 @@ namespace Tiger.Challenge.Tests
         [Fact(DisplayName = "An empty string produces a default challenge.")]
         public void EmptyChallenge_NoResults()
         {
-            // arrange
-            var challenge = string.Empty;
+            var actual = BearerChallenge.Parse(string.Empty);
 
-            // act
-            var actual = BearerChallenge.Parse(challenge);
-
-            // assert
             Assert.NotNull(actual);
             Assert.Null(actual.Realm);
             Assert.Empty(actual.Scope);
@@ -59,13 +59,8 @@ namespace Tiger.Challenge.Tests
         [Fact(DisplayName = "An empty string produces a default challenge.")]
         public void EmptyChallenge_NoResults_Try()
         {
-            // arrange
-            var challenge = string.Empty;
+            var success = BearerChallenge.TryParse(string.Empty, out var actual);
 
-            // act
-            var success = BearerChallenge.TryParse(challenge, out var actual);
-
-            // assert
             Assert.True(success);
             Assert.NotNull(actual);
             Assert.Null(actual.Realm);
@@ -80,26 +75,20 @@ namespace Tiger.Challenge.Tests
         [Fact(DisplayName = "A challenge with an empty scope otherwise parses.")]
         public void EmptyScope_Parses()
         {
-            // arrange
-            const string challenge = @"realm=""cimpress.auth0.com"", scope="""", error=""invalid_token"", error_description=""The token is expired""";
+            const string Challenge = @"realm=""cimpress.auth0.com"", scope="""", error=""invalid_token"", error_description=""The token is expired""";
 
-            // act
-            var actual = Record.Exception(() => BearerChallenge.Parse(challenge));
+            var actual = Record.Exception(() => BearerChallenge.Parse(Challenge));
 
-            // assert
             Assert.Null(actual);
         }
 
         [Fact(DisplayName = "A challenge with an empty scope otherwise parses.")]
         public void EmptyScope_Parses_Try()
         {
-            // arrange
-            const string challenge = @"realm=""cimpress.auth0.com"", scope="""", error=""invalid_token"", error_description=""The token is expired""";
+            const string Challenge = @"realm=""cimpress.auth0.com"", scope="""", error=""invalid_token"", error_description=""The token is expired""";
 
-            // act
-            var success = BearerChallenge.TryParse(challenge, out var actual);
+            var success = BearerChallenge.TryParse(Challenge, out var actual);
 
-            // assert
             Assert.True(success);
             Assert.NotNull(actual);
         }
@@ -107,21 +96,18 @@ namespace Tiger.Challenge.Tests
         [Fact(DisplayName = "A challenge with an empty scope produces empty scope data.")]
         public void EmptyScope_Results_EmptyScope()
         {
-            // arrange
-            const string realm = "cimpress.auth0.com";
-            const string error = "invalid_token";
-            const string errorDescription = "The token is expired";
-            var challenge = $@"realm=""{realm}"", scope="""", error=""{error}"", error_description=""{errorDescription}""";
+            const string Realm = "cimpress.auth0.com";
+            const string Error = "invalid_token";
+            const string ErrorDescription = "The token is expired";
+            var challenge = $@"realm=""{Realm}"", scope="""", error=""{Error}"", error_description=""{ErrorDescription}""";
 
-            // act
             var actual = BearerChallenge.Parse(challenge);
 
-            // assert
             Assert.NotNull(actual);
-            Assert.Equal(realm, actual.Realm, Ordinal);
+            Assert.Equal(Realm, actual.Realm, Ordinal);
             Assert.Empty(actual.Scope);
-            Assert.Equal(error, actual.Error, Ordinal);
-            Assert.Equal(errorDescription, actual.ErrorDescription, Ordinal);
+            Assert.Equal(Error, actual.Error, Ordinal);
+            Assert.Equal(ErrorDescription, actual.ErrorDescription, Ordinal);
             Assert.Null(actual.ErrorUri);
             Assert.NotNull(actual.Extensions);
             Assert.Empty(actual.Extensions);
@@ -130,22 +116,19 @@ namespace Tiger.Challenge.Tests
         [Fact(DisplayName = "A challenge with an empty scope produces empty scope data.")]
         public void EmptyScope_Results_EmptyScope_Try()
         {
-            // arrange
-            const string realm = "cimpress.auth0.com";
-            const string error = "invalid_token";
-            const string errorDescription = "The token is expired";
-            var challenge = $@"realm=""{realm}"", scope="""", error=""{error}"", error_description=""{errorDescription}""";
+            const string Realm = "cimpress.auth0.com";
+            const string Error = "invalid_token";
+            const string ErrorDescription = "The token is expired";
+            var challenge = $@"realm=""{Realm}"", scope="""", error=""{Error}"", error_description=""{ErrorDescription}""";
 
-            // act
             var success = BearerChallenge.TryParse(challenge, out var actual);
 
-            // assert
             Assert.True(success);
             Assert.NotNull(actual);
-            Assert.Equal(realm, actual.Realm, Ordinal);
+            Assert.Equal(Realm, actual.Realm, Ordinal);
             Assert.Empty(actual.Scope);
-            Assert.Equal(error, actual.Error, Ordinal);
-            Assert.Equal(errorDescription, actual.ErrorDescription, Ordinal);
+            Assert.Equal(Error, actual.Error, Ordinal);
+            Assert.Equal(ErrorDescription, actual.ErrorDescription, Ordinal);
             Assert.Null(actual.ErrorUri);
             Assert.NotNull(actual.Extensions);
             Assert.Empty(actual.Extensions);
@@ -154,47 +137,38 @@ namespace Tiger.Challenge.Tests
         [Fact(DisplayName = "A challenge with no scope otherwise parses.")]
         public void ThreeSixtyNoScope_Parses()
         {
-            // arrange
-            const string challenge = @"realm=""cimpress.auth0.com"", error=""invalid_token"", error_description=""The token is expired""";
+            const string Challenge = @"realm=""cimpress.auth0.com"", error=""invalid_token"", error_description=""The token is expired""";
 
-            // act
-            var actual = Record.Exception(() => BearerChallenge.Parse(challenge));
+            var actual = Record.Exception(() => BearerChallenge.Parse(Challenge));
 
-            // assert
             Assert.Null(actual);
         }
 
         [Fact(DisplayName = "A challenge with no scope otherwise parses.")]
         public void ThreeSixtyNoScope_Parses_Try()
         {
-            // arrange
-            const string challenge = @"realm=""cimpress.auth0.com"", error=""invalid_token"", error_description=""The token is expired""";
+            const string Challenge = @"realm=""cimpress.auth0.com"", error=""invalid_token"", error_description=""The token is expired""";
 
-            // act
-            var success = BearerChallenge.TryParse(challenge, out var actual);
+            var success = BearerChallenge.TryParse(Challenge, out var _);
 
-            // assert
             Assert.True(success);
         }
 
         [Fact(DisplayName = "A challenge with no scope produces empty scope data.")]
         public void ThreeSixtyNoScope_Results_EmptyScope()
         {
-            // arrange
-            const string realm = "cimpress.auth0.com";
-            const string error = "invalid_token";
-            const string errorDescription = "The token is expired";
-            var challenge = $@"realm=""{realm}"", error=""{error}"", error_description=""{errorDescription}""";
+            const string Realm = "cimpress.auth0.com";
+            const string Error = "invalid_token";
+            const string ErrorDescription = "The token is expired";
+            var challenge = $@"realm=""{Realm}"", error=""{Error}"", error_description=""{ErrorDescription}""";
 
-            // act
             var actual = BearerChallenge.Parse(challenge);
 
-            // assert
             Assert.NotNull(actual);
-            Assert.Equal(realm, actual.Realm, Ordinal);
+            Assert.Equal(Realm, actual.Realm, Ordinal);
             Assert.Empty(actual.Scope);
-            Assert.Equal(error, actual.Error, Ordinal);
-            Assert.Equal(errorDescription, actual.ErrorDescription, Ordinal);
+            Assert.Equal(Error, actual.Error, Ordinal);
+            Assert.Equal(ErrorDescription, actual.ErrorDescription, Ordinal);
             Assert.Null(actual.ErrorUri);
             Assert.NotNull(actual.Extensions);
             Assert.Empty(actual.Extensions);
@@ -203,22 +177,19 @@ namespace Tiger.Challenge.Tests
         [Fact(DisplayName = "A challenge with no scope produces empty scope data.")]
         public void ThreeSixtyNoScope_Results_EmptyScope_Try()
         {
-            // arrange
-            const string realm = "cimpress.auth0.com";
-            const string error = "invalid_token";
-            const string errorDescription = "The token is expired";
-            var challenge = $@"realm=""{realm}"", error=""{error}"", error_description=""{errorDescription}""";
+            const string Realm = "cimpress.auth0.com";
+            const string Error = "invalid_token";
+            const string ErrorDescription = "The token is expired";
+            var challenge = $@"realm=""{Realm}"", error=""{Error}"", error_description=""{ErrorDescription}""";
 
-            // act
             var success = BearerChallenge.TryParse(challenge, out var actual);
 
-            // assert
             Assert.True(success);
             Assert.NotNull(actual);
-            Assert.Equal(realm, actual.Realm, Ordinal);
+            Assert.Equal(Realm, actual.Realm, Ordinal);
             Assert.Empty(actual.Scope);
-            Assert.Equal(error, actual.Error, Ordinal);
-            Assert.Equal(errorDescription, actual.ErrorDescription, Ordinal);
+            Assert.Equal(Error, actual.Error, Ordinal);
+            Assert.Equal(ErrorDescription, actual.ErrorDescription, Ordinal);
             Assert.Null(actual.ErrorUri);
             Assert.NotNull(actual.Extensions);
             Assert.Empty(actual.Extensions);
@@ -227,36 +198,30 @@ namespace Tiger.Challenge.Tests
         [Fact(DisplayName = "A typical challenge parses.")]
         public void TypicalChallenge_Parses()
         {
-            // arrange
-            const string realm = "cimpress.auth0.com";
-            var scope = new [] { "openid" };
-            const string error = "invalid_token";
-            const string errorDescription = "The token is expired";
+            const string Realm = "cimpress.auth0.com";
+            var scope = new[] { "openid" };
+            const string Error = "invalid_token";
+            const string ErrorDescription = "The token is expired";
             var authorizationUri = new Uri("https://cimpress.auth0.com/oauth/token", Absolute);
-            var challenge = $@"realm=""{realm}"", authorization_uri=""{authorizationUri}"", scope=""{string.Join(" ", scope)}"", error=""{error}"", error_description=""{errorDescription}""";
+            var challenge = $@"realm=""{Realm}"", authorization_uri=""{authorizationUri}"", scope=""{string.Join(" ", scope)}"", error=""{Error}"", error_description=""{ErrorDescription}""";
 
-            // act
             var actual = Record.Exception(() => BearerChallenge.Parse(challenge));
 
-            // assert
             Assert.Null(actual);
         }
 
         [Fact(DisplayName = "A typical challenge parses.")]
         public void TypicalChallenge_Parses_Try()
         {
-            // arrange
-            const string realm = "cimpress.auth0.com";
+            const string Realm = "cimpress.auth0.com";
             var scope = new[] { "openid" };
-            const string error = "invalid_token";
-            const string errorDescription = "The token is expired";
+            const string Error = "invalid_token";
+            const string ErrorDescription = "The token is expired";
             var authorizationUri = new Uri("https://cimpress.auth0.com/oauth/token", Absolute);
-            var challenge = $@"realm=""{realm}"", authorization_uri=""{authorizationUri}"", scope=""{string.Join(" ", scope)}"", error=""{error}"", error_description=""{errorDescription}""";
+            var challenge = $@"realm=""{Realm}"", authorization_uri=""{authorizationUri}"", scope=""{string.Join(" ", scope)}"", error=""{Error}"", error_description=""{ErrorDescription}""";
 
-            // act
             var success = BearerChallenge.TryParse(challenge, out var actual);
 
-            // assert
             Assert.True(success);
             Assert.NotNull(actual);
         }
@@ -264,23 +229,20 @@ namespace Tiger.Challenge.Tests
         [Fact(DisplayName = "A typical challenge produces the correct data.")]
         public void TypicalChallenge_Results()
         {
-            // arrange
-            const string realm = "cimpress.auth0.com";
+            const string Realm = "cimpress.auth0.com";
             var scope = new[] { "openid", "profile" };
-            const string error = "invalid_token";
-            const string errorDescription = "The token is expired";
+            const string Error = "invalid_token";
+            const string ErrorDescription = "The token is expired";
             var authorizationUri = new Uri("https://cimpress.auth0.com/oauth/token", Absolute);
-            var challenge = $@"realm=""{realm}"", authorization_uri=""{authorizationUri}"", scope=""{string.Join(" ", scope)}"", error=""{error}"", error_description=""{errorDescription}""";
+            var challenge = $@"realm=""{Realm}"", authorization_uri=""{authorizationUri}"", scope=""{string.Join(" ", scope)}"", error=""{Error}"", error_description=""{ErrorDescription}""";
 
-            // act
             var actual = BearerChallenge.Parse(challenge);
 
-            // assert
             Assert.NotNull(actual);
-            Assert.Equal(realm, actual.Realm, Ordinal);
+            Assert.Equal(Realm, actual.Realm, Ordinal);
             Assert.Equal(scope, actual.Scope, Ordinal);
-            Assert.Equal(error, actual.Error, Ordinal);
-            Assert.Equal(errorDescription, actual.ErrorDescription, Ordinal);
+            Assert.Equal(Error, actual.Error, Ordinal);
+            Assert.Equal(ErrorDescription, actual.ErrorDescription, Ordinal);
             Assert.Null(actual.ErrorUri);
             Assert.NotNull(actual.Extensions);
             var value = Assert.Contains("authorization_uri", actual.Extensions);
@@ -290,24 +252,21 @@ namespace Tiger.Challenge.Tests
         [Fact(DisplayName = "A typical challenge produces the correct data.")]
         public void TypicalChallenge_Results_Try()
         {
-            // arrange
-            const string realm = "cimpress.auth0.com";
+            const string Realm = "cimpress.auth0.com";
             var scope = new[] { "openid", "profile" };
-            const string error = "invalid_token";
-            const string errorDescription = "The token is expired";
+            const string Error = "invalid_token";
+            const string ErrorDescription = "The token is expired";
             var authorizationUri = new Uri("https://cimpress.auth0.com/oauth/token", Absolute);
-            var challenge = $@"realm=""{realm}"", authorization_uri=""{authorizationUri}"", scope=""{string.Join(" ", scope)}"", error=""{error}"", error_description=""{errorDescription}""";
+            var challenge = $@"realm=""{Realm}"", authorization_uri=""{authorizationUri}"", scope=""{string.Join(" ", scope)}"", error=""{Error}"", error_description=""{ErrorDescription}""";
 
-            // act
             var success = BearerChallenge.TryParse(challenge, out var actual);
 
-            // assert
             Assert.True(success);
             Assert.NotNull(actual);
-            Assert.Equal(realm, actual.Realm, Ordinal);
+            Assert.Equal(Realm, actual.Realm, Ordinal);
             Assert.Equal(scope, actual.Scope, Ordinal);
-            Assert.Equal(error, actual.Error, Ordinal);
-            Assert.Equal(errorDescription, actual.ErrorDescription, Ordinal);
+            Assert.Equal(Error, actual.Error, Ordinal);
+            Assert.Equal(ErrorDescription, actual.ErrorDescription, Ordinal);
             Assert.Null(actual.ErrorUri);
             Assert.NotNull(actual.Extensions);
             var value = Assert.Contains("authorization_uri", actual.Extensions);
@@ -317,41 +276,32 @@ namespace Tiger.Challenge.Tests
         [Fact(DisplayName = "A challenge is valid when converted to a string.")]
         public void ToString_Valid()
         {
-            // arrange
-            const string challenge = @"realm=""cimpress.auth0.com"", scope=""client_id=0NBlSon1C4tJEVWS6GJRjwju5NxKHfBF service=https://orr.fen.cimpress.io"", error=""invalid_token"", error_description=""The token is expired""";
+            const string Challenge = @"realm=""cimpress.auth0.com"", scope=""client_id=0NBlSon1C4tJEVWS6GJRjwju5NxKHfBF service=https://orr.fen.cimpress.io"", error=""invalid_token"", error_description=""The token is expired""";
 
-            // act
-            var actual = Record.Exception(() => BearerChallenge.Parse(BearerChallenge.Parse(challenge).ToString()));
+            var actual = Record.Exception(() => BearerChallenge.Parse(BearerChallenge.Parse(Challenge).ToString()));
 
-            // assert
             Assert.Null(actual);
         }
 
         [Fact(DisplayName = "Bad quoting causes a parsing failure.")]
         public void BadQuotes_Failure()
         {
-            // arrange
-            const string challenge = @"realm=""cimpress.auth0.com, scope=""client_id=0NBlSon1C4tJEVWS6GJRjwju5NxKHfBF service=https://orr.fen.cimpress.io"", error=""invalid_token"", error_description=""The token is expired""";
+            const string Challenge = @"realm=""cimpress.auth0.com, scope=""client_id=0NBlSon1C4tJEVWS6GJRjwju5NxKHfBF service=https://orr.fen.cimpress.io"", error=""invalid_token"", error_description=""The token is expired""";
 
-            // act
-            var actual = Record.Exception(() => BearerChallenge.Parse(challenge));
+            var actual = Record.Exception(() => BearerChallenge.Parse(Challenge));
 
-            // assert
             Assert.NotNull(actual);
             var formatException = Assert.IsType<FormatException>(actual);
-            Assert.Contains("correct format", formatException.Message);
+            Assert.Contains("correct format", formatException.Message, StringComparison.Ordinal);
         }
 
         [Fact(DisplayName = "Bad quoting causes a parsing failure.")]
         public void BadQuotes_Failure_Try()
         {
-            // arrange
-            const string challenge = @"realm=""cimpress.auth0.com, scope=""client_id=0NBlSon1C4tJEVWS6GJRjwju5NxKHfBF service=https://orr.fen.cimpress.io"", error=""invalid_token"", error_description=""The token is expired""";
+            const string Challenge = @"realm=""cimpress.auth0.com, scope=""client_id=0NBlSon1C4tJEVWS6GJRjwju5NxKHfBF service=https://orr.fen.cimpress.io"", error=""invalid_token"", error_description=""The token is expired""";
 
-            // act
-            var success = BearerChallenge.TryParse(challenge, out var actual);
+            var success = BearerChallenge.TryParse(Challenge, out var actual);
 
-            // assert
             Assert.False(success);
             Assert.Null(actual);
         }
@@ -359,13 +309,10 @@ namespace Tiger.Challenge.Tests
         [Fact(DisplayName = "A duplicate key causes a parsing failure.")]
         public void DuplicateKey_Failure()
         {
-            // arrange
-            const string challenge = @"realm=""cimpress.auth0.com"", realm=""cimpress.example.com"", scope=""client_id=0NBlSon1C4tJEVWS6GJRjwju5NxKHfBF service=https://orr.fen.cimpress.io"", error=""invalid_token"", error_description=""The token is expired""";
+            const string Challenge = @"realm=""cimpress.auth0.com"", realm=""cimpress.example.com"", scope=""client_id=0NBlSon1C4tJEVWS6GJRjwju5NxKHfBF service=https://orr.fen.cimpress.io"", error=""invalid_token"", error_description=""The token is expired""";
 
-            // act
-            var actual = Record.Exception(() => BearerChallenge.Parse(challenge));
+            var actual = Record.Exception(() => BearerChallenge.Parse(Challenge));
 
-            // assert
             Assert.NotNull(actual);
             var formatException = Assert.IsType<FormatException>(actual);
             Assert.Contains("correct format", formatException.Message, StringComparison.Ordinal);
@@ -374,13 +321,10 @@ namespace Tiger.Challenge.Tests
         [Fact(DisplayName = "A duplicate key causes a parsing failure.")]
         public void DuplicateKey_Failure_Try()
         {
-            // arrange
-            const string challenge = @"realm=""cimpress.auth0.com"", realm=""cimpress.example.com"", scope=""client_id=0NBlSon1C4tJEVWS6GJRjwju5NxKHfBF service=https://orr.fen.cimpress.io"", error=""invalid_token"", error_description=""The token is expired""";
+            const string Challenge = @"realm=""cimpress.auth0.com"", realm=""cimpress.example.com"", scope=""client_id=0NBlSon1C4tJEVWS6GJRjwju5NxKHfBF service=https://orr.fen.cimpress.io"", error=""invalid_token"", error_description=""The token is expired""";
 
-            // act
-            var success = BearerChallenge.TryParse(challenge, out var actual);
+            var success = BearerChallenge.TryParse(Challenge, out var actual);
 
-            // assert
             Assert.False(success);
             Assert.Null(actual);
         }
