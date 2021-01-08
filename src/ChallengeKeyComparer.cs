@@ -1,7 +1,7 @@
 // <copyright file="ChallengeKeyComparer.cs" company="Cimpress, Inc.">
-//   Copyright 2017 Cimpress, Inc.
+//   Copyright 2020 Cimpress, Inc.
 //
-//   Licensed under the Apache License, Version 2.0 (the "License");
+//   Licensed under the Apache License, Version 2.0 (the "License") â€“
 //   you may not use this file except in compliance with the License.
 //   You may obtain a copy of the License at
 //
@@ -16,15 +16,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using JetBrains.Annotations;
-using static System.StringComparer;
 
 namespace Tiger.Challenge
 {
-    /// <summary>Compares the keys of challenge key–value pairs for equality.</summary>
+    /// <summary>Compares the keys of challenge keyï¿½value pairs for equality.</summary>
     /// <typeparam name="TValue">The type of the value of the <see cref="KeyValuePair{TKey,TValue}"/>.</typeparam>
-    [PublicAPI]
     sealed class ChallengeKeyComparer<TValue>
         : IEqualityComparer<KeyValuePair<string, TValue>>
     {
@@ -33,7 +29,6 @@ namespace Tiger.Challenge
         /// <summary>
         /// Initializes a new instance of the <see cref="ChallengeKeyComparer{TValue}"/> class.
         /// </summary>
-        [SuppressMessage("ReSharper", "ExceptionNotDocumentedOptional", Justification = "Default equality comparer is never null.")]
         public ChallengeKeyComparer()
             : this(EqualityComparer<string>.Default)
         {
@@ -43,10 +38,9 @@ namespace Tiger.Challenge
         /// Initializes a new instance of the <see cref="ChallengeKeyComparer{TValue}"/> class.
         /// </summary>
         /// <param name="keyComparer">The equality comparer to use in comparing keys.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="keyComparer"/> is <see langword="null"/>.</exception>
-        public ChallengeKeyComparer([NotNull] IEqualityComparer<string> keyComparer)
+        public ChallengeKeyComparer(IEqualityComparer<string> keyComparer)
         {
-            _keyComparer = keyComparer ?? throw new ArgumentNullException(nameof(keyComparer));
+            _keyComparer = keyComparer;
         }
 
         /// <inheritdoc />
@@ -56,13 +50,9 @@ namespace Tiger.Challenge
         /// <inheritdoc />
         public int GetHashCode(KeyValuePair<string, TValue> obj)
         {
-#if NETCOREAPP2_1
             var hash = default(HashCode);
-            hash.Add(obj.Key, Ordinal);
+            hash.Add(obj.Key, _keyComparer);
             return hash.ToHashCode();
-#else
-            return obj.Key?.GetHashCode() ?? 0;
-#endif
         }
     }
 }

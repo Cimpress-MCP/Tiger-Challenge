@@ -1,7 +1,7 @@
 ﻿// <copyright file="ParserExtensions.cs" company="Cimpress, Inc.">
-//   Copyright 2017 Cimpress, Inc.
+//   Copyright 2020 Cimpress, Inc.
 //
-//   Licensed under the Apache License, Version 2.0 (the "License");
+//   Licensed under the Apache License, Version 2.0 (the "License") –
 //   you may not use this file except in compliance with the License.
 //   You may obtain a copy of the License at
 //
@@ -14,19 +14,15 @@
 //   limitations under the License.
 // </copyright>
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using Sprache;
 using static System.Linq.Enumerable;
-using static JetBrains.Annotations.ImplicitUseTargetFlags;
 using static Sprache.Result;
 
 namespace Tiger.Challenge
 {
     /// <summary>Extensions to the functionality of <see cref="Parser{T}"/>.</summary>
-    [UsedImplicitly(Members)]
     static class ParserExtensions
     {
         /// <summary>
@@ -38,15 +34,8 @@ namespace Tiger.Challenge
         /// </typeparam>
         /// <param name="parser">A parser.</param>
         /// <returns>A parser that fails on duplicates.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="parser"/> is <see langword="null"/>.</exception>
-        [NotNull]
-        public static Parser<IEnumerable<TItem>> WithoutDuplicates<TItem>(
-            [NotNull] this Parser<IEnumerable<TItem>> parser)
-        {
-            if (parser == null) { throw new ArgumentNullException(nameof(parser)); }
-
-            return parser.WithoutDuplicates(EqualityComparer<TItem>.Default);
-        }
+        public static Parser<IEnumerable<TItem>> WithoutDuplicates<TItem>(this Parser<IEnumerable<TItem>> parser) =>
+            parser.WithoutDuplicates(EqualityComparer<TItem>.Default);
 
         /// <summary>
         /// Specifies that a parse result is not to contain duplicates,
@@ -58,15 +47,9 @@ namespace Tiger.Challenge
         /// <param name="parser">A parser.</param>
         /// <param name="comparer">A comparer for items.</param>
         /// <returns>A parser that fails on duplicates.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="parser"/> is <see langword="null"/>.</exception>
-        [NotNull]
         public static Parser<IEnumerable<TItem>> WithoutDuplicates<TItem>(
-            [NotNull] this Parser<IEnumerable<TItem>> parser,
-            [CanBeNull] IEqualityComparer<TItem> comparer)
-        {
-            if (parser == null) { throw new ArgumentNullException(nameof(parser)); }
-
-            return input =>
+            this Parser<IEnumerable<TItem>> parser,
+            IEqualityComparer<TItem> comparer) => input =>
             {
                 var result = parser(input);
                 if (!result.WasSuccessful) { return result; }
@@ -78,6 +61,5 @@ namespace Tiger.Challenge
                     ? result
                     : Failure<IEnumerable<TItem>>(input, "Duplicates detected", Empty<string>());
             };
-        }
     }
 }
