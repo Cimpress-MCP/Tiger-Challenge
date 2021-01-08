@@ -1,7 +1,7 @@
 ﻿// <copyright file="BearerChallenge.Parse.cs" company="Cimpress, Inc.">
-//   Copyright 2017 Cimpress, Inc.
+//   Copyright 2020 Cimpress, Inc.
 //
-//   Licensed under the Apache License, Version 2.0 (the "License");
+//   Licensed under the Apache License, Version 2.0 (the "License") –
 //   you may not use this file except in compliance with the License.
 //   You may obtain a copy of the License at
 //
@@ -17,7 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using JetBrains.Annotations;
+using System.Diagnostics.CodeAnalysis;
 using Sprache;
 using static System.Linq.Enumerable;
 using static System.StringComparer;
@@ -111,15 +111,11 @@ namespace Tiger.Challenge
         /// The challenge from a WWW-Authenticate header, following the "Bearer" auth. scheme.
         /// </param>
         /// <returns>A <see cref="BearerChallenge"/>.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="challengeParameter"/> is <see langword="null"/>.</exception>
         /// <exception cref="FormatException">The challenge could not be parsed.</exception>
         /// <exception cref="FormatException">The scope could not be parsed.</exception>
         /// <exception cref="FormatException">The error URI could not be parsed.</exception>
-        [NotNull, Pure]
-        public static BearerChallenge Parse([NotNull] string challengeParameter)
+        public static BearerChallenge Parse(string challengeParameter)
         {
-            if (challengeParameter == null) { throw new ArgumentNullException(nameof(challengeParameter)); }
-
             ImmutableDictionary<string, string> authParams;
             try
             {
@@ -144,12 +140,12 @@ namespace Tiger.Challenge
             var error = authParams.GetValueOrDefault(ErrorKey);
             var errorDescription = authParams.GetValueOrDefault(ErrorDescriptionKey);
 
-            Uri errorUri = null;
+            Uri? errorUri = null;
             var rawErrorUri = authParams.GetValueOrDefault(ErrorUriKey);
-            if (rawErrorUri != null)
+            if (rawErrorUri is not null)
             {
                 try
-                { // ReSharper disable once ExceptionNotDocumentedOptional
+                {
                     errorUri = new Uri(rawErrorUri, RelativeOrAbsolute);
                 }
                 catch (UriFormatException ufe)
@@ -181,14 +177,10 @@ namespace Tiger.Challenge
         /// <see langword="true"/> if <paramref name="challengeParameter"/> was converted successfully;
         /// otherwise, <see langword="false"/>.
         /// </returns>
-        /// <exception cref="ArgumentNullException"><paramref name="challengeParameter"/> is <see langword="null"/>.</exception>
-        [ContractAnnotation("=>true,result:notnull; =>false,result:null"), Pure]
         public static bool TryParse(
-            [NotNull] string challengeParameter,
-            out BearerChallenge result)
+            string challengeParameter,
+            [NotNullWhen(true)] out BearerChallenge? result)
         {
-            if (challengeParameter == null) { throw new ArgumentNullException(nameof(challengeParameter)); }
-
             var authParams = s_authParams.TryParse(challengeParameter);
             if (!authParams.WasSuccessful)
             {
@@ -207,15 +199,12 @@ namespace Tiger.Challenge
             var error = authParams.Value.GetValueOrDefault(ErrorKey);
             var errorDescription = authParams.Value.GetValueOrDefault(ErrorDescriptionKey);
 
-            Uri errorUri = null;
+            Uri? errorUri = null;
             var rawErrorUri = authParams.Value.GetValueOrDefault(ErrorUriKey);
-            if (rawErrorUri != null)
+            if (rawErrorUri is not null && !Uri.TryCreate(authParams.Value.GetValueOrDefault(ErrorUriKey), RelativeOrAbsolute, out errorUri))
             {
-                if (!Uri.TryCreate(authParams.Value.GetValueOrDefault(ErrorUriKey), RelativeOrAbsolute, out errorUri))
-                {
-                    result = default;
-                    return false;
-                }
+                result = default;
+                return false;
             }
 
             var extensions = authParams.Value.RemoveRange(s_knownKeys);
