@@ -12,11 +12,11 @@ variables:
 build:
   stage: build
   script:
-  - dotnet build
+  - dotnet build -property:ContinuousIntegrationBuild=true
   cache: &cache_template
     key: ${CI_COMMIT_REF_SLUG}
     paths:
-    - ./src/bin/*
+    - ./src/*/bin/*
     - ./unit/bin/*
     policy: push
 
