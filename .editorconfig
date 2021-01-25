@@ -234,3 +234,9 @@ file_header_template = <copyright file="{fileName}" company="Cimpress, Inc.">\n 
 
 # Project-Specific Rules
 dotnet_diagnostic.RCS1018.severity = none
+dotnet_diagnostic.SA1101.severity = none
+dotnet_diagnostic.SA1308.severity = none
+dotnet_diagnostic.SA1309.severity = none
+dotnet_diagnostic.SA1311.severity = none
+dotnet_diagnostic.SA1400.severity = none
+dotnet_diagnostic.SA1636.severity = none

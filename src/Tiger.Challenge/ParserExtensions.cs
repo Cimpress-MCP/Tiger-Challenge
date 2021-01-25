@@ -52,7 +52,10 @@ namespace Tiger.Challenge
             IEqualityComparer<TItem> comparer) => input =>
             {
                 var result = parser(input);
-                if (!result.WasSuccessful) { return result; }
+                if (!result.WasSuccessful)
+                {
+                    return result;
+                }
 
                 var resultValue = result.Value.ToList();
                 var originalCount = resultValue.Count;

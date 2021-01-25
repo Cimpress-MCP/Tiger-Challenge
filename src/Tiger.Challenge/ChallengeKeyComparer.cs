@@ -19,7 +19,7 @@ using System.Collections.Generic;
 
 namespace Tiger.Challenge
 {
-    /// <summary>Compares the keys of challenge key�value pairs for equality.</summary>
+    /// <summary>Compares the keys of challenge key–value pairs for equality.</summary>
     /// <typeparam name="TValue">The type of the value of the <see cref="KeyValuePair{TKey,TValue}"/>.</typeparam>
     sealed class ChallengeKeyComparer<TValue>
         : IEqualityComparer<KeyValuePair<string, TValue>>
