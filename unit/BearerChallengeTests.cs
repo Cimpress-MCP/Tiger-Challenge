@@ -63,7 +63,7 @@ namespace Tiger.Challenge.Tests
 
             Assert.True(success);
             Assert.NotNull(actual);
-            Assert.Null(actual.Realm);
+            Assert.Null(actual!.Realm);
             Assert.Empty(actual.Scope);
             Assert.Null(actual.Error);
             Assert.Null(actual.ErrorDescription);
@@ -125,7 +125,7 @@ namespace Tiger.Challenge.Tests
 
             Assert.True(success);
             Assert.NotNull(actual);
-            Assert.Equal(Realm, actual.Realm, Ordinal);
+            Assert.Equal(Realm, actual!.Realm, Ordinal);
             Assert.Empty(actual.Scope);
             Assert.Equal(Error, actual.Error, Ordinal);
             Assert.Equal(ErrorDescription, actual.ErrorDescription, Ordinal);
@@ -186,7 +186,7 @@ namespace Tiger.Challenge.Tests
 
             Assert.True(success);
             Assert.NotNull(actual);
-            Assert.Equal(Realm, actual.Realm, Ordinal);
+            Assert.Equal(Realm, actual!.Realm, Ordinal);
             Assert.Empty(actual.Scope);
             Assert.Equal(Error, actual.Error, Ordinal);
             Assert.Equal(ErrorDescription, actual.ErrorDescription, Ordinal);
@@ -263,7 +263,7 @@ namespace Tiger.Challenge.Tests
 
             Assert.True(success);
             Assert.NotNull(actual);
-            Assert.Equal(Realm, actual.Realm, Ordinal);
+            Assert.Equal(Realm, actual!.Realm, Ordinal);
             Assert.Equal(scope, actual.Scope, Ordinal);
             Assert.Equal(Error, actual.Error, Ordinal);
             Assert.Equal(ErrorDescription, actual.ErrorDescription, Ordinal);
@@ -330,4 +330,3 @@ namespace Tiger.Challenge.Tests
         }
     }
 }
-
