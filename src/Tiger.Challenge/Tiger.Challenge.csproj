@@ -3,13 +3,16 @@
   <PropertyGroup>
     <Description>A parser of WWW-Authenticate challenge headers.</Description>
     <AssemblyTitle>Tiger Challenge</AssemblyTitle>
-    <VersionPrefix>3.0.1</VersionPrefix>
+    <VersionPrefix>3.0.2</VersionPrefix>
     <Authors>cosborn@cimpress.com</Authors>
-    <TargetFrameworks>netstandard2.1;net5.0</TargetFrameworks>
+    <TargetFrameworks>$(TargetFrameworks);netstandard2.1</TargetFrameworks>
     <AssemblyName>Tiger.Challenge</AssemblyName>
     <PackageId>Tiger.Challenge</PackageId>
     <PackageTags>www-authenticate;challenge;bearer;auth0;oauth;oauth2;oauth 2.0</PackageTags>
-    <PackageReleaseNotes><![CDATA[➟ Release 3.0.1
+    <PackageReleaseNotes><![CDATA[➟ Release 3.0.2
+⁃ When targeting netstandard2.1, the library's compabibility has been widened.
+
+➟ Release 3.0.1
 ⁃ The library has retargeted .NET Standard 2.1 and .NET 5.0.
 
 ➟ Release 3.0.0
@@ -31,7 +34,7 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' ">
-    <PackageReference Include="System.Collections.Immutable" Version="5.0.0" />
+    <PackageReference Include="System.Collections.Immutable" Version="1.7.1" />
   </ItemGroup>
 
   <ItemGroup>
