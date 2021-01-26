@@ -17,7 +17,7 @@ build:
     key: ${CI_COMMIT_REF_SLUG}
     paths:
     - ./src/*/bin/*
-    - ./unit/bin/*
+    - ./unit/*
     policy: push
 
 test:
@@ -40,14 +40,12 @@ pack:
     <<: *cache_template
     policy: pull
   artifacts:
-    untracked: false
     paths:
     - ./dist/
 
 deploy:
   stage: deploy
   script:
-  - dotnet nuget push ./dist/*.nupkg --api-key "${NUGET_API_KEY}"
+  - dotnet nuget push --api-key "${NUGET_API_KEY}" ./dist/*.nupkg
   only:
-    refs:
-    - main
+  - main
