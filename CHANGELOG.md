@@ -1,3 +1,7 @@
+### What's new in 3.0.2 (Released 2021-01-26)
+
+* When targeting netstandard2.1, the library's compabibility has been widened.
+
 ### What's new in 3.0.1 (Released 2020-01-25)
 
 * The library has retargeted .NET Standard 2.1 and .NET 5.0.
