@@ -3,20 +3,19 @@
   <PropertyGroup>
     <Description>A parser of WWW-Authenticate challenge headers.</Description>
     <AssemblyTitle>Tiger Challenge</AssemblyTitle>
-    <VersionPrefix>3.0.2</VersionPrefix>
+    <VersionPrefix>4.0.0</VersionPrefix>
     <Authors>cosborn@cimpress.com</Authors>
-    <TargetFrameworks>$(TargetFrameworks);netstandard2.1</TargetFrameworks>
     <AssemblyName>Tiger.Challenge</AssemblyName>
     <PackageId>Tiger.Challenge</PackageId>
     <PackageTags>www-authenticate;challenge;bearer;auth0;oauth;oauth2;oauth 2.0</PackageTags>
-    <PackageReleaseNotes><![CDATA[➟ Release 3.0.2
+    <PackageReleaseNotes><![CDATA[➟ Release 4.0.0
+⁃ The library now targets .NET 6.
+⁃ Some types have been restructured to take advantage of C# 10 features.
+⁃ The parser has been upgraded from Sprache to the more performant Superpower.
+⁃ A future release will refactor the parser to a tokenizing parser with no public API change.
+
+➟ Release 3.0.2
 ⁃ When targeting netstandard2.1, the library's compabibility has been widened.
-
-➟ Release 3.0.1
-⁃ The library has retargeted .NET Standard 2.1 and .NET 5.0.
-
-➟ Release 3.0.0
-⁃ The library has grown compatibility with .NET Standard 2.1 and .NET Core 3.1.
 ]]></PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/Cimpress-MCP/Tiger-Challenge</PackageProjectUrl>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
@@ -29,18 +28,27 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <AdditionalFiles Include="../../stylecop.json" />
     <None Include="../../tiger_logo.png" Pack="true" PackagePath="" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' ">
-    <PackageReference Include="System.Collections.Immutable" Version="1.7.1" />
-  </ItemGroup>
-
   <ItemGroup>
-    <PackageReference Include="Sprache" Version="2.3.1" />
+    <PackageReference Include="Superpower" Version="3.0.0" />
 
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="all" />
+    
+    <Using Include="Superpower" />
+    <Using Include="Superpower.Model" />
+    <Using Include="Superpower.Parse" Static="true" />
+    <Using Include="Superpower.Parsers" />
+    <Using Include="System.Collections.Generic.KeyValuePair" Alias="Pair" />
+    <Using Include="System.Collections.Generic.KeyValuePair&lt;string,string&gt;" Alias="StringPair" />
+    <Using Include="System.Collections.Immutable.ImmutableSortedSet" Alias="Set" />
+    <Using Include="System.Collections.Immutable.ImmutableSortedSet&lt;string&gt;" Alias="StringSet" />
+    <Using Include="System.Collections.Immutable.ImmutableDictionary" Alias="Map" />
+    <Using Include="System.Collections.Immutable.ImmutableDictionary&lt;string,string&gt;" Alias="StringMap" />
+    <Using Include="System.Array" Static="true" />
+    <Using Include="System.StringComparer" Static="true" />
+    <Using Include="System.UriKind" Static="true" />
   </ItemGroup>
 
 </Project>
