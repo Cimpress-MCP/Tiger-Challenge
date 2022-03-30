@@ -25,74 +25,70 @@ public sealed partial record class BearerChallenge
     const string ErrorDescriptionKey = "error_description";
     const string ErrorUriKey = "error_uri";
 
-    static readonly ChallengeKeyComparer<string> s_comparer = new(OrdinalIgnoreCase);
-
     static readonly StringSet s_knownKeys = Set.Create(RealmKey, ScopeKey, ErrorKey, ErrorDescriptionKey, ErrorUriKey);
 
-    static readonly Parser<char> s_hTab = Char('\t').Named("HTAB");
+    static readonly TextParser<char> s_hTab = Character.EqualTo('\t').Named("HTAB");
 
-    static readonly Parser<char> s_sp = Char(' ').Named("SP");
+    static readonly TextParser<char> s_sp = Character.EqualTo(' ').Named("SP");
 
-    static readonly Parser<char> s_vChar =
-        Char(c => c is >= (char)0x21 and <= (char)0x7E, "visible (printing) characters").Named("VCHAR");
+    static readonly TextParser<char> s_vChar =
+        Character.Matching(c => c is >= '!' and <= '~', "visible (printing) characters").Named("VCHAR");
 
-    static readonly Parser<char> s_obsText =
-        Char(c => c is >= (char)0x80 and <= (char)0xFF, "observable text").Named("obs-text");
+    static readonly TextParser<char> s_obsText =
+        Character.Matching(c => c is >= (char)0x80 and <= (char)0xFF, "observable text").Named("obs-text");
 
-    static readonly Parser<char> s_qdText = s_hTab
-        .XOr(s_sp)
-        .XOr(Char('!'))
-        .XOr(Char(c => c is >= (char)0x23 and <= (char)0x5B, "%x23-5B"))
-        .XOr(Char(c => c is >= (char)0x5D and <= (char)0x7E, "%x5D-7E"))
-        .XOr(s_obsText)
-        .Named("QDTEXT");
+    static readonly TextParser<char> s_qdText = OneOf(
+        s_hTab,
+        s_sp,
+        Character.EqualTo('!'),
+        Character.Matching(c => c is >= '#' and <= '[', "%x23-5B"),
+        Character.Matching(c => c is >= ']' and <= '~', "%x5D-7E"),
+        s_obsText).Named("QDTEXT");
 
-    static readonly Parser<char> s_dQuote = Char('"').Named("DQUOTE");
+    static readonly TextParser<char> s_dQuote = Character.EqualTo('"').Named("DQUOTE");
 
-    static readonly Parser<char> s_quotedPair =
-        (from slash in Char('\\')
-         from next in s_hTab.XOr(s_sp).XOr(s_vChar).XOr(s_obsText)
-         select next).Named("quoted pair");
+    static readonly TextParser<char> s_quotedPair = Character
+        .EqualTo('\\')
+        .IgnoreThen(OneOf(s_hTab, s_sp, s_vChar, s_obsText))
+        .Named("quoted pair");
 
-    static readonly Parser<string> s_quotedString = s_qdText
-        .XOr(s_quotedPair)
-        .XMany()
-        .Text()
-        .Contained(s_dQuote, s_dQuote)
+    static readonly TextParser<string> s_quotedString = OneOf(s_qdText, s_quotedPair)
+        .Many()
+        .Between(s_dQuote, s_dQuote)
+        .Select(cs => new string(cs))
         .Named("quoted-string");
 
-    static readonly Parser<string> s_token = LetterOrDigit
-        .XOr(Chars("!#$%&'*+-.^_`|~"))
-        .XAtLeastOnce()
-        .Text()
+    static readonly TextParser<string> s_token = OneOf(
+            Character.LetterOrDigit,
+            Character.In("!#$%&'*+-.^_`|~".ToCharArray()))
+        .AtLeastOnce()
+        .Select(cs => new string(cs))
         .Named("token");
 
-    static readonly Parser<string> s_scopeToken = Char('!')
-        .XOr(Char(c => c is >= (char)0x23 and <= (char)0x5B, "%x23-5B"))
-        .XOr(Char(c => c is >= (char)0x5D and <= (char)0x7E, "%x5D-7E"))
-        .XAtLeastOnce()
-        .Text()
+    static readonly TextParser<string> s_scopeToken = OneOf(
+            Character.EqualTo('!'),
+            Character.Matching(c => c is >= '#' and <= '[', "%x23-5B"),
+            Character.Matching(c => c is >= ']' and <= '~', "%x5D-7E"))
+        .AtLeastOnce()
+        .Select(cs => new string(cs))
         .Named("scope-token");
 
-    static readonly Parser<StringPair> s_authParam =
-        from key in s_token
-        from equalsSign in Char('=').Token()
-        from value in s_token.XOr(s_quotedString)
-        select new StringPair(key, value);
+    static readonly TextParser<StringPair> s_authParam = s_token
+        .Apply(Character.EqualTo('=').Token().IgnoreThen(s_token.Or(s_quotedString)), Pair.Create);
 
-    static readonly Parser<StringMap> s_authParams =
-        s_authParam.XDelimitedBy(Char(',').Token())
-            .XOr(Return(Empty<StringPair>()))
-            .End()
-            .WithoutDuplicates(s_comparer)
-            .Select(aps => aps.ToImmutableDictionary(OrdinalIgnoreCase));
+    static readonly TextParser<StringMap> s_authParams = s_authParam
+        .ManyDelimitedBy(Character.EqualTo(',').Token())
+        .OptionalOrDefault(Empty<StringPair>())
+        .AtEnd()
+        .WithoutDuplicatesBy(p => p.Key, OrdinalIgnoreCase)
+        .Select(aps => Map.CreateRange(OrdinalIgnoreCase, aps));
 
-    static readonly Parser<StringSet> s_scopes =
-        s_scopeToken.XDelimitedBy(s_sp.XAtLeastOnce())
-            .XOr(Return(Empty<string>()))
-            .End()
-            .WithoutDuplicates(OrdinalIgnoreCase)
-            .Select(Set.CreateRange);
+    static readonly TextParser<StringSet> s_scopes = s_scopeToken
+        .ManyDelimitedBy(s_sp.AtLeastOnce())
+        .OptionalOrDefault(Empty<string>())
+        .AtEnd()
+        .WithoutDuplicates(OrdinalIgnoreCase)
+        .Select(ss => Set.CreateRange(OrdinalIgnoreCase, ss));
 
     /// <summary>Parses a string to produce a <see cref="BearerChallenge"/>.</summary>
     /// <param name="challengeParameter">
@@ -143,7 +139,6 @@ public sealed partial record class BearerChallenge
         }
 
         var extensions = authParams.RemoveRange(s_knownKeys);
-
         return new(scope, extensions)
         {
             Realm = realm,
@@ -176,7 +171,7 @@ public sealed partial record class BearerChallenge
         [NotNullWhen(true)] out BearerChallenge? result)
     {
         var authParams = s_authParams.TryParse(challengeParameter);
-        if (!authParams.WasSuccessful)
+        if (!authParams.HasValue)
         {
             result = default;
             return false;
@@ -184,7 +179,7 @@ public sealed partial record class BearerChallenge
 
         var realm = authParams.Value.GetValueOrDefault(RealmKey);
         var scope = s_scopes.TryParse(authParams.Value.GetValueOrDefault(ScopeKey, string.Empty));
-        if (!scope.WasSuccessful)
+        if (!scope.HasValue)
         {
             result = default;
             return false;
@@ -202,7 +197,6 @@ public sealed partial record class BearerChallenge
         }
 
         var extensions = authParams.Value.RemoveRange(s_knownKeys);
-
         result = new(scope.Value, extensions)
         {
             Realm = realm,

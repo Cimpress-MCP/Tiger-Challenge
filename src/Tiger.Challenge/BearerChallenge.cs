@@ -14,15 +14,12 @@
 //   limitations under the License.
 // </copyright>
 
-using Microsoft.VisualBasic;
-
 namespace Tiger.Challenge;
 
 /// <summary>Represents the challenge following the "Bearer" auth. scheme in a WWW-Authenticate header.</summary>
 /// <param name="Scope">A collection of space-delimited values from the "scope" attribute of the challenge.</param>
 /// <param name="Extensions">
-/// A mapping of keys to values for authn. parameters not explicitly defined
-/// by the Bearer challenge specification.
+/// A mapping of keys to values for authn. parameters not explicitly definedby the Bearer challenge specification.
 /// </param>
 public sealed partial record class BearerChallenge(StringSet Scope, StringMap Extensions)
 {
