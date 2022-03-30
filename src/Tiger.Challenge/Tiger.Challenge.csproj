@@ -5,7 +5,6 @@
     <AssemblyTitle>Tiger Challenge</AssemblyTitle>
     <VersionPrefix>3.0.2</VersionPrefix>
     <Authors>cosborn@cimpress.com</Authors>
-    <TargetFrameworks>$(TargetFrameworks);netstandard2.1</TargetFrameworks>
     <AssemblyName>Tiger.Challenge</AssemblyName>
     <PackageId>Tiger.Challenge</PackageId>
     <PackageTags>www-authenticate;challenge;bearer;auth0;oauth;oauth2;oauth 2.0</PackageTags>
@@ -29,18 +28,25 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <AdditionalFiles Include="../../stylecop.json" />
     <None Include="../../tiger_logo.png" Pack="true" PackagePath="" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' ">
-    <PackageReference Include="System.Collections.Immutable" Version="1.7.1" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Sprache" Version="2.3.1" />
 
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="all" />
+    
+    <Using Include="Sprache" />
+    <Using Include="Sprache.Parse" Static="true" />
+    <Using Include="Sprache.Result" Static="true" />
+    <Using Include="System.Collections.Generic.KeyValuePair&lt;string,string&gt;" Alias="StringPair" />
+    <Using Include="System.Collections.Immutable" />
+    <Using Include="System.Collections.Immutable.ImmutableSortedSet" Alias="Set" />
+    <Using Include="System.Collections.Immutable.ImmutableSortedSet&lt;string&gt;" Alias="StringSet" />
+    <Using Include="System.Collections.Immutable.ImmutableDictionary&lt;string,string&gt;" Alias="StringMap" />
+    <Using Include="System.Linq.Enumerable" Static="true" />
+    <Using Include="System.StringComparer" Static="true" />
+    <Using Include="System.UriKind" Static="true" />
   </ItemGroup>
 
 </Project>

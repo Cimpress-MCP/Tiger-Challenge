@@ -1,5 +1,5 @@
 // <copyright file="ChallengeKeyComparer.cs" company="Cimpress, Inc.">
-//   Copyright 2020 Cimpress, Inc.
+//   Copyright 2020–2022 Cimpress, Inc.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License") –
 //   you may not use this file except in compliance with the License.
@@ -14,45 +14,41 @@
 //   limitations under the License.
 // </copyright>
 
-using System;
-using System.Collections.Generic;
+namespace Tiger.Challenge;
 
-namespace Tiger.Challenge
+/// <summary>Compares the keys of challenge key–value pairs for equality.</summary>
+/// <typeparam name="TValue">The type of the value of the <see cref="KeyValuePair{TKey,TValue}"/>.</typeparam>
+sealed class ChallengeKeyComparer<TValue>
+    : IEqualityComparer<KeyValuePair<string, TValue>>
 {
-    /// <summary>Compares the keys of challenge key–value pairs for equality.</summary>
-    /// <typeparam name="TValue">The type of the value of the <see cref="KeyValuePair{TKey,TValue}"/>.</typeparam>
-    sealed class ChallengeKeyComparer<TValue>
-        : IEqualityComparer<KeyValuePair<string, TValue>>
+    readonly IEqualityComparer<string> _keyComparer;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ChallengeKeyComparer{TValue}"/> class.
+    /// </summary>
+    public ChallengeKeyComparer()
+        : this(EqualityComparer<string>.Default)
     {
-        readonly IEqualityComparer<string> _keyComparer;
+    }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ChallengeKeyComparer{TValue}"/> class.
-        /// </summary>
-        public ChallengeKeyComparer()
-            : this(EqualityComparer<string>.Default)
-        {
-        }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ChallengeKeyComparer{TValue}"/> class.
+    /// </summary>
+    /// <param name="keyComparer">The equality comparer to use in comparing keys.</param>
+    public ChallengeKeyComparer(IEqualityComparer<string> keyComparer)
+    {
+        _keyComparer = keyComparer;
+    }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ChallengeKeyComparer{TValue}"/> class.
-        /// </summary>
-        /// <param name="keyComparer">The equality comparer to use in comparing keys.</param>
-        public ChallengeKeyComparer(IEqualityComparer<string> keyComparer)
-        {
-            _keyComparer = keyComparer;
-        }
+    /// <inheritdoc />
+    public bool Equals(KeyValuePair<string, TValue> x, KeyValuePair<string, TValue> y) =>
+        _keyComparer.Equals(x.Key, y.Key);
 
-        /// <inheritdoc />
-        public bool Equals(KeyValuePair<string, TValue> x, KeyValuePair<string, TValue> y) =>
-            _keyComparer.Equals(x.Key, y.Key);
-
-        /// <inheritdoc />
-        public int GetHashCode(KeyValuePair<string, TValue> obj)
-        {
-            var hash = default(HashCode);
-            hash.Add(obj.Key, _keyComparer);
-            return hash.ToHashCode();
-        }
+    /// <inheritdoc />
+    public int GetHashCode(KeyValuePair<string, TValue> obj)
+    {
+        var hash = default(HashCode);
+        hash.Add(obj.Key, _keyComparer);
+        return hash.ToHashCode();
     }
 }

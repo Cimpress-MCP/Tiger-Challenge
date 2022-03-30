@@ -11,10 +11,12 @@
     <PackageReference Include="coverlet.collector" Version="3.0.2" PrivateAssets="all" />
     <PackageReference Include="JunitXml.TestLogger" Version="2.1.81" PrivateAssets="all" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3" PrivateAssets="all" />
-  </ItemGroup>
 
-  <ItemGroup>
     <ProjectReference Include="..\src\Tiger.Challenge\Tiger.Challenge.csproj" />
+
+    <Using Include="System.StringComparer" Static="true" />
+    <Using Include="System.UriKind" Static="true" />
+    <Using Include="Xunit" />
   </ItemGroup>
 
 </Project>
