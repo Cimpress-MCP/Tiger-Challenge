@@ -70,7 +70,7 @@ public sealed partial record class BearerChallenge(StringSet Scope, StringMap Ex
 
         if (Extensions is { Count: >= 0 } ee)
         {
-            output.AddRange(ee.Select(kvp => $@"{kvp.Key}=""{kvp.Value}"""));
+            output.AddRange(ee.Select(static kvp => $@"{kvp.Key}=""{kvp.Value}"""));
         }
 
         return string.Join(", ", output);

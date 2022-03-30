@@ -32,17 +32,17 @@ public sealed partial record class BearerChallenge
     static readonly TextParser<char> s_sp = Character.EqualTo(' ').Named("SP");
 
     static readonly TextParser<char> s_vChar =
-        Character.Matching(c => c is >= '!' and <= '~', "visible (printing) characters").Named("VCHAR");
+        Character.Matching(static c => c is >= '!' and <= '~', "visible (printing) characters").Named("VCHAR");
 
     static readonly TextParser<char> s_obsText =
-        Character.Matching(c => c is >= (char)0x80 and <= (char)0xFF, "observable text").Named("obs-text");
+        Character.Matching(static c => c is >= (char)0x80 and <= (char)0xFF, "observable text").Named("obs-text");
 
     static readonly TextParser<char> s_qdText = OneOf(
         s_hTab,
         s_sp,
         Character.EqualTo('!'),
-        Character.Matching(c => c is >= '#' and <= '[', "%x23-5B"),
-        Character.Matching(c => c is >= ']' and <= '~', "%x5D-7E"),
+        Character.Matching(static c => c is >= '#' and <= '[', "%x23-5B"),
+        Character.Matching(static c => c is >= ']' and <= '~', "%x5D-7E"),
         s_obsText).Named("QDTEXT");
 
     static readonly TextParser<char> s_dQuote = Character.EqualTo('"').Named("DQUOTE");
@@ -55,22 +55,22 @@ public sealed partial record class BearerChallenge
     static readonly TextParser<string> s_quotedString = OneOf(s_qdText, s_quotedPair)
         .Many()
         .Between(s_dQuote, s_dQuote)
-        .Select(cs => new string(cs))
+        .Select(static cs => new string(cs))
         .Named("quoted-string");
 
     static readonly TextParser<string> s_token = OneOf(
             Character.LetterOrDigit,
             Character.In("!#$%&'*+-.^_`|~".ToCharArray()))
         .AtLeastOnce()
-        .Select(cs => new string(cs))
+        .Select(static cs => new string(cs))
         .Named("token");
 
     static readonly TextParser<string> s_scopeToken = OneOf(
             Character.EqualTo('!'),
-            Character.Matching(c => c is >= '#' and <= '[', "%x23-5B"),
-            Character.Matching(c => c is >= ']' and <= '~', "%x5D-7E"))
+            Character.Matching(static c => c is >= '#' and <= '[', "%x23-5B"),
+            Character.Matching(static c => c is >= ']' and <= '~', "%x5D-7E"))
         .AtLeastOnce()
-        .Select(cs => new string(cs))
+        .Select(static cs => new string(cs))
         .Named("scope-token");
 
     static readonly TextParser<StringPair> s_authParam = s_token
@@ -80,15 +80,15 @@ public sealed partial record class BearerChallenge
         .ManyDelimitedBy(Character.EqualTo(',').Token())
         .OptionalOrDefault(Empty<StringPair>())
         .AtEnd()
-        .WithoutDuplicatesBy(p => p.Key, OrdinalIgnoreCase)
-        .Select(aps => Map.CreateRange(OrdinalIgnoreCase, aps));
+        .WithoutDuplicatesBy(static p => p.Key, OrdinalIgnoreCase)
+        .Select(static aps => Map.CreateRange(OrdinalIgnoreCase, aps));
 
     static readonly TextParser<StringSet> s_scopes = s_scopeToken
         .ManyDelimitedBy(s_sp.AtLeastOnce())
         .OptionalOrDefault(Empty<string>())
         .AtEnd()
         .WithoutDuplicates(OrdinalIgnoreCase)
-        .Select(ss => Set.CreateRange(OrdinalIgnoreCase, ss));
+        .Select(static ss => Set.CreateRange(OrdinalIgnoreCase, ss));
 
     /// <summary>Parses a string to produce a <see cref="BearerChallenge"/>.</summary>
     /// <param name="challengeParameter">

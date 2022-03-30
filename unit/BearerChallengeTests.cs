@@ -22,7 +22,7 @@ public class BearerChallengeTests
     [Fact(DisplayName = "An empty string can be parsed as a challenge.")]
     public void EmptyChallenge_Parses()
     {
-        var actual = Record.Exception(() => BearerChallenge.Parse(string.Empty));
+        var actual = Record.Exception(static () => BearerChallenge.Parse(string.Empty));
 
         Assert.Null(actual);
     }
@@ -72,7 +72,7 @@ public class BearerChallengeTests
     {
         const string Challenge = @"realm=""cimpress.auth0.com"", scope="""", error=""invalid_token"", error_description=""The token is expired""";
 
-        var actual = Record.Exception(() => BearerChallenge.Parse(Challenge));
+        var actual = Record.Exception(static () => BearerChallenge.Parse(Challenge));
 
         Assert.Null(actual);
     }
@@ -134,7 +134,7 @@ public class BearerChallengeTests
     {
         const string Challenge = @"realm=""cimpress.auth0.com"", error=""invalid_token"", error_description=""The token is expired""";
 
-        var actual = Record.Exception(() => BearerChallenge.Parse(Challenge));
+        var actual = Record.Exception(static () => BearerChallenge.Parse(Challenge));
 
         Assert.Null(actual);
     }
@@ -273,7 +273,7 @@ public class BearerChallengeTests
     {
         const string Challenge = @"realm=""cimpress.auth0.com"", scope=""client_id=0NBlSon1C4tJEVWS6GJRjwju5NxKHfBF service=https://orr.fen.cimpress.io"", error=""invalid_token"", error_description=""The token is expired""";
 
-        var actual = Record.Exception(() => BearerChallenge.Parse(BearerChallenge.Parse(Challenge).ToString()));
+        var actual = Record.Exception(static () => BearerChallenge.Parse(BearerChallenge.Parse(Challenge).ToString()));
 
         Assert.Null(actual);
     }
@@ -283,7 +283,7 @@ public class BearerChallengeTests
     {
         const string Challenge = @"realm=""cimpress.auth0.com, scope=""client_id=0NBlSon1C4tJEVWS6GJRjwju5NxKHfBF service=https://orr.fen.cimpress.io"", error=""invalid_token"", error_description=""The token is expired""";
 
-        var actual = Record.Exception(() => BearerChallenge.Parse(Challenge));
+        var actual = Record.Exception(static () => BearerChallenge.Parse(Challenge));
 
         Assert.NotNull(actual);
         var formatException = Assert.IsType<FormatException>(actual);
@@ -306,7 +306,7 @@ public class BearerChallengeTests
     {
         const string Challenge = @"realm=""cimpress.auth0.com"", realm=""cimpress.example.com"", scope=""client_id=0NBlSon1C4tJEVWS6GJRjwju5NxKHfBF service=https://orr.fen.cimpress.io"", error=""invalid_token"", error_description=""The token is expired""";
 
-        var actual = Record.Exception(() => BearerChallenge.Parse(Challenge));
+        var actual = Record.Exception(static () => BearerChallenge.Parse(Challenge));
 
         Assert.NotNull(actual);
         var formatException = Assert.IsType<FormatException>(actual);
